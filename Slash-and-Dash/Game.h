@@ -5,14 +5,14 @@ class Game{
 private:
 	sf::RenderWindow* window;
 
+	void init();
+	void initWinow();
+
 public:
 	Game();
 	~Game();
 
 	void run();
-
-	void init();
-	void initWinow();
 
 	void update();
 	void updatePollEvents();
