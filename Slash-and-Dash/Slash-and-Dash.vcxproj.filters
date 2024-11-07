@@ -7,6 +7,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">
@@ -18,6 +21,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

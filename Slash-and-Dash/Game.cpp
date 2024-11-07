@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Player.h"
 
 Game::Game() {
 	init();
@@ -40,5 +41,6 @@ void Game::updatePollEvents(){
 
 void Game::render(){
 	window->clear();
+
 	window->display();
 }
