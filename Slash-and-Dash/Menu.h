@@ -11,12 +11,12 @@ public:
     void moveDown();
     int getSelectedOption() const;
 
-    void getIntput();
+    void updateOptionColor(int index, const sf::Color& color);
 
     void render(sf::RenderTarget *target);
 
 private:
     std::vector<sf::Text> menuOptions;
     sf::Font font;
-    int selectedOptionIndex;
+    int Index;
 };

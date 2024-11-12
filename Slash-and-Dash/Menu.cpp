@@ -1,8 +1,8 @@
 #include "Menu.h"
 
-Menu::Menu(float width, float height) : selectedOptionIndex(0) {
+Menu::Menu(float width, float height) : Index(0) {
     if (!font.loadFromFile("Assets/Fonts/Roboto-Regular.ttf")) {
-        
+
     }
 
     std::vector<std::string> options = { "Play", "Settings", "Quit" };
@@ -12,34 +12,34 @@ Menu::Menu(float width, float height) : selectedOptionIndex(0) {
         text.setFont(font);
         text.setString(options[i]);
         text.setFillColor(i == 0 ? sf::Color::Red : sf::Color::White);
-        text.setPosition(sf::Vector2f(width / 2, height / (options.size() + 1) * (i + 1)));
+        text.setPosition(sf::Vector2f(width/2 - 40, height / (options.size() + 1) * (i + 1) - 20));
 
         menuOptions.push_back(text);
     }
 }
 
 void Menu::moveUp() {
-    if (selectedOptionIndex - 1 >= 0) {
-        menuOptions[selectedOptionIndex].setFillColor(sf::Color::White);
-        selectedOptionIndex--;
-        menuOptions[selectedOptionIndex].setFillColor(sf::Color::Red);
-    }
+    updateOptionColor(Index, sf::Color::White);
+    Index = (Index - 1 + menuOptions.size()) % menuOptions.size(); // damit das wieder nach oben geht wenn ganz unten & andersrum
+    updateOptionColor(Index, sf::Color::Red);
 }
 
 void Menu::moveDown() {
-    if (selectedOptionIndex + 1 < menuOptions.size()) {
-        menuOptions[selectedOptionIndex].setFillColor(sf::Color::White);
-        selectedOptionIndex++;
-        menuOptions[selectedOptionIndex].setFillColor(sf::Color::Red);
-    }
+    updateOptionColor(Index, sf::Color::White);
+    Index = (Index + 1) % menuOptions.size(); //wie da oben
+    updateOptionColor(Index, sf::Color::Red);
+}
+
+void Menu::updateOptionColor(int index, const sf::Color& color) {
+    menuOptions[index].setFillColor(color);
 }
 
 int Menu::getSelectedOption() const {
-    return selectedOptionIndex;
+    return Index;
 }
 
 void Menu::render(sf::RenderTarget* target) {
-    for (sf::Text option : menuOptions) {
+    for (const auto& option : menuOptions) {
         target->draw(option);
     }
 }
