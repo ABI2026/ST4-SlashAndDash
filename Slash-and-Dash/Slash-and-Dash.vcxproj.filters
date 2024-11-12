@@ -10,6 +10,9 @@
     <ClCompile Include="Menu.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Scripts">
@@ -24,6 +27,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Menu.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
