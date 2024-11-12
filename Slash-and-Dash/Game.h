@@ -1,5 +1,6 @@
 #pragma once
 #include"SFML/Graphics.hpp"
+#include "Menu.h"
 
 class Game{
 private:
@@ -7,6 +8,14 @@ private:
 
 	void init();
 	void initWinow();
+	void initVars();
+
+	void update();
+	void updateMenu();
+	void updatePollEvents();
+
+	Menu* menu;
+	bool inMenu;
 
 public:
 	Game();
@@ -14,9 +23,5 @@ public:
 
 	void run();
 
-	void update();
-	void updatePollEvents();
-
 	void render();
 };
-

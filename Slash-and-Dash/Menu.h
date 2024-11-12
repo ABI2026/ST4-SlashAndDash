@@ -11,6 +11,8 @@ public:
     void moveDown();
     int getSelectedOption() const;
 
+    void getIntput();
+
     void render(sf::RenderTarget *target);
 
 private:
