@@ -7,7 +7,11 @@
     <ClCompile Include="main.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="World.cpp">
+=======
+    <ClCompile Include="Menu.cpp">
+>>>>>>> e0234058cfa296453bcc3a9b3d2bc40c7b35087a
       <Filter>Scripts</Filter>
     </ClCompile>
   </ItemGroup>
@@ -23,7 +27,11 @@
     <ClInclude Include="Game.h">
       <Filter>Headers</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="World.h">
+=======
+    <ClInclude Include="Menu.h">
+>>>>>>> e0234058cfa296453bcc3a9b3d2bc40c7b35087a
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
