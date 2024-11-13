@@ -34,6 +34,12 @@ void Menu::updateOptionColor(int index, const sf::Color& color) {
     menuOptions[index].setFillColor(color);
 }
 
+void Menu::update() {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && Index == 2) {
+
+    }
+}
+
 int Menu::getSelectedOption() const {
     return Index;
 }

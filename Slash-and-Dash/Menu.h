@@ -12,6 +12,7 @@ public:
     int getSelectedOption() const;
 
     void updateOptionColor(int index, const sf::Color& color);
+    void update();
 
     void render(sf::RenderTarget *target);
 
@@ -20,3 +21,4 @@ private:
     sf::Font font;
     int Index;
 };
+

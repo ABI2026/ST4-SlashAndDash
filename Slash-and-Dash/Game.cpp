@@ -11,6 +11,7 @@ Game::~Game(){
 void Game::run(){
 	while (this->window->isOpen()) {
 		update();
+		window->getSize();
 		render();
 	}
 }
