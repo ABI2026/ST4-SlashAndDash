@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Player.h"
 
 Game::Game() {
 	init();
@@ -11,6 +12,7 @@ Game::~Game(){
 void Game::run(){
 	while (this->window->isOpen()) {
 		update();
+		window->getSize();
 		render();
 	}
 }
