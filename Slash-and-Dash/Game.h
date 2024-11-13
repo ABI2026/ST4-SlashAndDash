@@ -1,6 +1,7 @@
 #pragma once
 #include"SFML/Graphics.hpp"
 #include "Menu.h"
+#include "World.h"
 
 class Game{
 private:
@@ -15,6 +16,7 @@ private:
 	void updatePollEvents();
 
 	Menu* menu;
+	World* world;
 	bool inMenu;
 
 public:

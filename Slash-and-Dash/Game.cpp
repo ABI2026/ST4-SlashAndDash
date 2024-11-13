@@ -29,6 +29,8 @@ void Game::initWinow(){
 void Game::initVars() {
 	inMenu = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
+
+	world = new World;
 }
 
 void Game::update(){
@@ -65,5 +67,9 @@ void Game::render(){
 
 	if (inMenu) menu->render(this->window);
 
+	world->render(this->window);
+
 	window->display();
 }
+
+
