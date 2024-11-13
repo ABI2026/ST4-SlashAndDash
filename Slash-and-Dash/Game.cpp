@@ -67,9 +67,9 @@ void Game::updatePollEvents(){
 void Game::render(){
 	window->clear();
 
-	if (inMenu) menu->render(this->window);
-
 	world->render(this->window);
+
+	if (inMenu) menu->render(this->window);
 
 	window->display();
 }
