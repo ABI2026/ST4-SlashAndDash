@@ -4,6 +4,12 @@
 
 class World{
 private:
+	float scaleX;
+	float scaleY;
+	float zentrierenX;
+	float zentrierenY;
+
+
 	std::vector<std::string> backgroundTextures;
 	std::vector<std::string> foregroundTextures;
 	std::vector<std::string> middlegroundTextures;
@@ -22,7 +28,7 @@ public:
 	void push_back_foregroundTexture(std::string);
 	void push_back_middlegroundTexture(std::string);
 	void loadTheWorld(int, int, int);
-
+	
 	void render(sf::RenderTarget* t);
 };
 

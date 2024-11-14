@@ -10,9 +10,17 @@ World::World(){
 
 World::World(sf::Vector2u windowSize)//Texturengröße richtig skalieren 
 {
+
 	sf::Vector2u texturGrossefront = fordergroundT.getSize();
 	sf::Vector2u texturGrossemid = middlegroundT.getSize();
 	sf::Vector2u texturGrosseback = backgroundT.getSize();
+
+	 scaleX = static_cast<float>(windowSize.x) / texturGrosseback.x;
+	 scaleY = static_cast<float>(windowSize.y) / texturGrosseback.y;
+
+	 zentrierenX = windowSize.x;
+	 zentrierenY = windowSize.y;
+
 }
 
 void World::push_back_backgroundTexture(std::string b)
@@ -51,6 +59,7 @@ void World::loadTheWorld(int a, int b, int c)
 	midground.setTexture(middlegroundT);
 	hintergrund.setTexture(backgroundT);
 }
+// update Grafiken abhängig von dem Fenster
 
 void World::render(sf::RenderTarget* t){
 	
@@ -63,11 +72,11 @@ void World::render(sf::RenderTarget* t){
 	t->draw(midground);
 	t->draw(forground);
 	
-	forground.setPosition(0, 400);
-	forground.setScale(1, 1);
+	hintergrund.setPosition(zentrierenX / 2.0f, zentrierenY / 2.0f);
+	hintergrund.setScale(scaleX, scaleY);
 	midground.setPosition(0, 200);
 	midground.setScale(2, 2);
-	hintergrund.setPosition(0, -400);
-	hintergrund.setScale(5, 5);
-	
+	forground.setPosition(0, 0);
+	forground.setScale(1, 2);
+	hintergrund.setOrigin(texturGrosseback.x / 2.0f, textureSize.y / 2.0f);
 }
