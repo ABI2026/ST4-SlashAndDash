@@ -53,7 +53,7 @@ void Game::updateMenu() {
 }
 
 void Game::updatePollEvents(){
-	sf::Event e;
+	
 	while (window->pollEvent(e)) {
 		if (e.type == sf::Event::Closed) {
 			window->close();
@@ -72,6 +72,11 @@ void Game::render(){
 	if (inMenu) menu->render(this->window);
 
 	window->display();
+}
+
+sf::Event Game::getEvent()
+{
+	return e;
 }
 
 

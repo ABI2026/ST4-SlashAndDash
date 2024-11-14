@@ -6,6 +6,7 @@
 class Game{
 private:
 	sf::RenderWindow* window;
+	sf::Event e;
 
 	void init();
 	void initWinow();
@@ -26,4 +27,6 @@ public:
 	void run();
 
 	void render();
+
+	sf::Event getEvent();
 };
