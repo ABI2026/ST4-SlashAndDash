@@ -130,11 +130,13 @@ void Game::render() {
 	window->clear();
 
 	window->setView(gameView);
-	world->render(this->window);
 
 	if (!state) {
 		window->setView(window->getDefaultView());
 		menu->render(this->window);
+	}
+	else {
+		world->render(this->window);
 	}
 
 	window->display();
