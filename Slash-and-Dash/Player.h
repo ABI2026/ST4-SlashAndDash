@@ -22,7 +22,7 @@ public:
 	~Player();
 
 	sf::FloatRect getBounds();
-	std::vector<sf::Texture> addTexture(std::string file);
+	void addTexture(std::string file);
 	void switchTexture(int index);
 
 	void render(sf::RenderTarget* target);

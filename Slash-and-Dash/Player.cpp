@@ -19,7 +19,7 @@ sf::FloatRect Player::getBounds()
 	return sp.getGlobalBounds();
 }
 
-std::vector<sf::Texture> Player::addTexture(std::string file)
+void Player::addTexture(std::string file)
 {
 	if (!tx.loadFromFile(file)) {
 		std::cout << "One Playertexture was not load corectly" << std::endl;
@@ -69,5 +69,4 @@ void Player::movePlayer2()
 		sp.move(1.0, 0.0);
 	}
 }
-
 

@@ -13,7 +13,7 @@ private:
 	std::vector<std::string> backgroundTextures;
 	std::vector<std::string> foregroundTextures;
 	std::vector<std::string> middlegroundTextures;
-
+	
 	sf::Texture fordergroundT;
 	sf::Texture middlegroundT;
 	sf::Texture backgroundT;

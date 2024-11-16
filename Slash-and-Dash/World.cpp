@@ -8,7 +8,7 @@ World::World(){
 	loadTheWorld(0,0,0);
 }
 
-World::World(sf::Vector2u windowSize)//Texturengröße richtig skalieren 
+World::World(sf::Vector2u windowSize)//Texturengrï¿½ï¿½e richtig skalieren 
 {
 
 	sf::Vector2u texturGrossefront = fordergroundT.getSize();
@@ -59,13 +59,13 @@ void World::loadTheWorld(int a, int b, int c)
 	midground.setTexture(middlegroundT);
 	hintergrund.setTexture(backgroundT);
 }
-// update Grafiken abhängig von dem Fenster
+// update Grafiken abhï¿½ngig von dem Fenster
 
 void World::render(sf::RenderTarget* t){
 	
 
-	//sf::Vector2u fensterGroesse = window.getSize();  //fenstergröße bestimmen
-	//sf::Vector2u texturGroesse = textur.getSize();  //texturgröße bestimmen
+	//sf::Vector2u fensterGroesse = window.getSize();  //fenstergrï¿½ï¿½e bestimmen
+	//sf::Vector2u texturGroesse = textur.getSize();  //texturgrï¿½ï¿½e bestimmen
 
 
 	t->draw(hintergrund);
@@ -78,5 +78,5 @@ void World::render(sf::RenderTarget* t){
 	midground.setScale(2, 2);
 	forground.setPosition(0, 0);
 	forground.setScale(1, 2);
-	hintergrund.setOrigin(texturGrosseback.x / 2.0f, textureSize.y / 2.0f);
+	//hintergrund.setOrigin(texturGrosseback.x / 2.0f, textureSize.y / 2.0f);
 }
