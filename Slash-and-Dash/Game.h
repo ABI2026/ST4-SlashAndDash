@@ -3,6 +3,8 @@
 #include "Menu.h"
 #include "World.h"
 
+class Player;
+
 class Game{
 private:
 	sf::RenderWindow* window;
@@ -17,19 +19,22 @@ private:
 
 	Menu* menu;
 	World* world;
+	Player* player;
 
 	void init();
 	void initWinow();
 	void initVars();
+	void initPlayer();
 
 	void update();
 	void updateMenu();
 	void updateView();
+	void updatePlayer();
 	void updatePollEvents();
 
 public:
 	Game();
-	~Game();
+	virtual ~Game();
 
 	void run();
 

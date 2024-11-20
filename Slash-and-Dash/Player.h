@@ -1,15 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Game.h"
 
 class Player
 {
 private:
 	sf::Texture tx;
 	sf::Sprite sp;
-	std::vector<sf::Texture> playerTextures;
+	sf::Texture playerTextures;
 	int index;
-	Game game;
+	sf::Event ev;
 
 	//player animation
 	//std::vector<sf::IntRect> frames; // for Sprite Sheet Animation
@@ -18,7 +17,7 @@ private:
 	//float switchTime; 
 
 public:
-	Player(int index); //to chose different textures
+	Player(); //to chose different textures
 	~Player();
 
 	sf::FloatRect getBounds();

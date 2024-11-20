@@ -41,6 +41,11 @@ void Game::initVars() {
 	world = new World;
 }
 
+void Game::initPlayer()
+{
+	Player();
+}
+
 void Game::updateView() {
 	float windowRatio = float(window->getSize().x) / float(window->getSize().y);
 	float viewRatio = viewWidth / viewHeight;
@@ -60,6 +65,11 @@ void Game::updateView() {
 	}
 
 	gameView.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
+}
+
+void Game::updatePlayer()
+{
+
 }
 
 void Game::update(){
