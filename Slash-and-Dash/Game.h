@@ -34,11 +34,7 @@ private:
 
 public:
 	Game();
-<<<<<<< HEAD
-	~Game();
-=======
 	virtual ~Game();
->>>>>>> ee81995340e818d71baf3555ac2b2bf66a82ce92
 
 	void run();
 
