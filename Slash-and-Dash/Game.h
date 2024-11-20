@@ -29,7 +29,7 @@ private:
 
 public:
 	Game();
-	virutal ~Game();
+	virtual ~Game();
 
 	void run();
 
