@@ -8,7 +8,7 @@ private:
 	float scaleY;
 	float zentrierenX;
 	float zentrierenY;
-
+	
 
 	std::vector<std::string> backgroundTextures;
 	std::vector<std::string> foregroundTextures;

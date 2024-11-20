@@ -2,7 +2,7 @@
 #include <iostream>
 
 World::World(){
-	push_back_backgroundTexture("Assets/Texture/far-mountains.png");
+	push_back_backgroundTexture("Assets/Texture/Sprite-0001background.png");
 	push_back_foregroundTexture("Assets/Texture/trees.png");
 	push_back_middlegroundTexture("Assets/Texture/mountains.png");
 	loadTheWorld(0,0,0);
@@ -15,8 +15,8 @@ World::World(sf::Vector2u windowSize)//Texturengr��e richtig skalieren
 	sf::Vector2u texturGrossemid = middlegroundT.getSize();
 	sf::Vector2u texturGrosseback = backgroundT.getSize();
 
-	 scaleX = static_cast<float>(windowSize.x) / texturGrosseback.x;
-	 scaleY = static_cast<float>(windowSize.y) / texturGrosseback.y;
+	 //scaleX = static_cast<float>(windowSize.x) / texturGrosseback.x;
+	 //scaleY = static_cast<float>(windowSize.y) / texturGrosseback.y;
 
 	 zentrierenX = windowSize.x;
 	 zentrierenY = windowSize.y;
@@ -72,11 +72,11 @@ void World::render(sf::RenderTarget* t){
 	t->draw(midground);
 	t->draw(forground);
 	
-	hintergrund.setPosition(zentrierenX / 2.0f, zentrierenY / 2.0f);
-	hintergrund.setScale(scaleX, scaleY);
-	midground.setPosition(0, 200);
-	midground.setScale(2, 2);
+	hintergrund.setPosition(0,0);
+	hintergrund.setScale(0.77,0.6);
+	midground.setPosition(0, 50);
+	midground.setScale(0, 0);
 	forground.setPosition(0, 0);
-	forground.setScale(1, 2);
+	forground.setScale(0, 0);
 	//hintergrund.setOrigin(texturGrosseback.x / 2.0f, textureSize.y / 2.0f);
 }
