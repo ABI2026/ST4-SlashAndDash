@@ -1,13 +1,10 @@
 #include "Player.h"
 #include <iostream>
 
-Player::Player(int index)
+Player::Player()
 {
-	this->index = index;
-	if (index < playerTextures.size()) {
-		tx = playerTextures[index];
-		sp.setTexture(tx);
-	}
+	addTexture("Assets/Texture/test player.png");
+	sp.setTexture(tx);
 	sp.setPosition(50.0f, 600.0f);
 	sp.setScale(0.5f, 0.5f);
 }
@@ -25,20 +22,19 @@ void Player::addTexture(std::string file)
 		std::cout << "One Playertexture was not load corectly" << std::endl;
 		return;
 	}
-	playerTextures.push_back(tx);
+	playerTextures = tx;
 }
 
 void Player::switchTexture(int index)
 {
-	sp.setTexture(playerTextures[index]);
-
+	sf::Event ev{};
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) {
 		index++;
 	}
 
-	if (game.getEvent().type == sf::Event::TextEntered)
+	if (ev.type == sf::Event::TextEntered)
 	{
-		if (game.getEvent().text.unicode == 0x00DC) {
+		if (ev.text.unicode == 0x00DC) {
 			index--;
 		}
 	}
