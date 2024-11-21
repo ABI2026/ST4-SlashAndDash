@@ -84,6 +84,7 @@ void Game::updateMenu() {
 
         switch (menu->getState()) {
         case Menu::MainMenu:
+			if (selectedOption == 0) state = 1;
             if (selectedOption == 1) menu->setState(Menu::SettingsMenu);
             else if (selectedOption == 2) window->close();
             break;
