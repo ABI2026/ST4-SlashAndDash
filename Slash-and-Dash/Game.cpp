@@ -119,6 +119,9 @@ void Game::updateMenu() {
         menu->moveDown();
         while (sf::Keyboard::isKeyPressed(sf::Keyboard::S));
     }
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+		menu->setState(Menu::MainMenu);
+	}
 }
 
 void Game::updatePollEvents(){
