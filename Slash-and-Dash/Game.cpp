@@ -67,8 +67,7 @@ void Game::updateView() {
 	gameView.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
 }
 
-void Game::updatePlayer()
-{
+void Game::updatePlayer(){
 
 }
 
@@ -85,18 +84,18 @@ void Game::updateMenu() {
         switch (menu->getState()) {
         case Menu::MainMenu:
 			if (selectedOption == 0) state = State::Playing;
-            if (selectedOption == 1) menu->setState(Menu::SettingsMenu);
+            if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
             else if (selectedOption == 2) window->close();
             break;
 
         case Menu::SettingsMenu:
-            if (selectedOption == 0) menu->setState(Menu::SoundMenu);
-            else if (selectedOption == 1) menu->setState(Menu::DisplayMenu);
-            else if (selectedOption == 2) menu->setState(Menu::MainMenu);
+            if (selectedOption == 0) menu->setState(Menu::SoundMenu, window->getSize());
+            else if (selectedOption == 1) menu->setState(Menu::DisplayMenu, window->getSize());
+            else if (selectedOption == 2) menu->setState(Menu::MainMenu, window->getSize());
             break;
 
         case Menu::SoundMenu:
-			if (selectedOption == 2) menu->setState(Menu::SettingsMenu);
+			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
 			break;
         case Menu::DisplayMenu:
 			if (selectedOption == 0) {
@@ -104,9 +103,13 @@ void Game::updateMenu() {
 				window->create(sf::VideoMode(960, 540),
 					"Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
 				updateView();
+				menu->setState(Menu::DisplayMenu, window->getSize());
 			}
-            if (selectedOption == 2) menu->setState(Menu::SettingsMenu);
+			if (selectedOption == 1) menu->setState(Menu::ResolutionMenu, window->getSize());
+            if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
             break;
+		case Menu::ResolutionMenu:
+			break;
         }
         while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));
     }
@@ -120,7 +123,7 @@ void Game::updateMenu() {
         while (sf::Keyboard::isKeyPressed(sf::Keyboard::S));
     }
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-		menu->setState(Menu::MainMenu);
+		menu->setState(Menu::MainMenu, window->getSize());
 	}
 }
 
