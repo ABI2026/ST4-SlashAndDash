@@ -11,7 +11,12 @@ private:
 	bool fullscreen;
 	sf::Event e;
 
-	int state; // 0 = Im Menue, 1 = Im Spiel
+	enum State {
+		inMainMenu,
+		inGameMenu,
+		Playing
+	};
+	State state;
 
 	sf::View gameView;
 	float viewWidth;

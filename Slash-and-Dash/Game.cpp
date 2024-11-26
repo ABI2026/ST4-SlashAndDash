@@ -34,7 +34,7 @@ void Game::initWinow(){
 }
 
 void Game::initVars() {
-	state = 0;
+	state = State::inMainMenu;
 	fullscreen = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
 
@@ -43,7 +43,7 @@ void Game::initVars() {
 
 void Game::initPlayer()
 {
-	Player();
+	Player* player = new Player;
 }
 
 void Game::updateView() {
@@ -75,7 +75,7 @@ void Game::updatePlayer()
 void Game::update(){
 	updatePollEvents();
 
-	if (!state) updateMenu();
+	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
 }
 
 void Game::updateMenu() {
@@ -84,7 +84,7 @@ void Game::updateMenu() {
 
         switch (menu->getState()) {
         case Menu::MainMenu:
-			if (selectedOption == 0) state = 1;
+			if (selectedOption == 0) state = State::Playing;
             if (selectedOption == 1) menu->setState(Menu::SettingsMenu);
             else if (selectedOption == 2) window->close();
             break;
@@ -128,7 +128,12 @@ void Game::updatePollEvents(){
 			window->close();
 		}
 		if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Escape) {
-			state ^= 1;
+			if (state == State::Playing) {
+				state = State::inGameMenu;
+			}
+			else if(state == State::inGameMenu){
+				state = State::Playing;
+			}
 		}
 		if (e.type == sf::Event::Resized) {
 			sf::FloatRect visibleArea(0, 0, e.size.width, e.size.height);
@@ -142,7 +147,7 @@ void Game::render() {
 
 	window->setView(gameView);
 
-	if (!state) {
+	if (state == State::inGameMenu || state == State::inMainMenu) {
 		window->setView(window->getDefaultView());
 		menu->render(this->window);
 	}
