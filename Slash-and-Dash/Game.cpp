@@ -101,7 +101,7 @@ void Game::updateMenu() {
         case Menu::DisplayMenu:
 			if (selectedOption == 0) {
 				fullscreen = !fullscreen;
-				window->create(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height),
+				window->create(sf::VideoMode(960, 540),
 					"Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
 				updateView();
 			}
