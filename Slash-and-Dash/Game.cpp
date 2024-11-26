@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Player.h"
 
+#include <iostream>
 Game::Game() {
 	viewWidth = 960;
 	viewHeight = 540;
@@ -109,6 +110,8 @@ void Game::updateMenu() {
             if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
             break;
 		case Menu::ResolutionMenu:
+			std::vector<int> res = menu->getSelectetResolution(selectedOption);
+			window->create(sf::VideoMode(res[0], res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
 			break;
         }
         while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));

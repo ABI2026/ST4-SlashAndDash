@@ -22,6 +22,7 @@ public:
 
     void setState(MenuState newState, sf::Vector2u ws);
     MenuState getState() const;
+    std::vector<int> getSelectetResolution(int x);
 
     void render(sf::RenderTarget* target);
 

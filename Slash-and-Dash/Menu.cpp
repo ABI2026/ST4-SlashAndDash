@@ -59,6 +59,32 @@ Menu::MenuState Menu::getState() const {
     return currentState;
 }
 
+std::vector<int> Menu::getSelectetResolution(int x) {
+    switch (x) {
+    case 0:
+        return std::vector<int>{640, 360};
+        break;
+    case 1:
+        return std::vector<int>{854, 480};
+        break;
+    case 2:
+        return std::vector<int>{1280, 720};
+        break;
+    case 3:
+        return std::vector<int>{1920, 1080};
+        break;
+    case 4:
+        return std::vector<int>{2560, 1440};
+        break;
+    case 5:
+        return std::vector<int>{3840, 2160};
+        break;
+
+    default:
+        return std::vector<int>{960, 540};
+    }
+}
+
 void Menu::loadMenuOptions(const std::vector<std::string>& options, int cs, sf::Vector2u ws) {
     menuOptions.clear();
 
