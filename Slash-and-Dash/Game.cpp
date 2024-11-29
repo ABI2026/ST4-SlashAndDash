@@ -44,7 +44,7 @@ void Game::initVars() {
 
 void Game::initPlayer()
 {
-	Player* player = new Player;
+	player = new Player;
 }
 
 void Game::updateView() {
@@ -111,7 +111,7 @@ void Game::updateMenu() {
             break;
 		case Menu::ResolutionMenu:
 			std::vector<int> res = menu->getSelectetResolution(selectedOption);
-			window->create(sf::VideoMode(res[0], res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
+			window->create(sf::VideoMode(sf::VideoMode::getDesktopMode()), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Titlebar);
 			break;
         }
         while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));
