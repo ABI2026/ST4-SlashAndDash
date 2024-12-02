@@ -1,32 +1,16 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics.hpp"
 
-class Player
-{
-private:
+class Player {
 	sf::Texture tx;
 	sf::Sprite sp;
-	sf::Texture playerTextures;
-	int index;
-	sf::Event ev;
 
-	//player animation
-	//std::vector<sf::IntRect> frames; // for Sprite Sheet Animation
-	//int currentFrame;
-	//float animationTimer;
-	//float switchTime; 
-
+	float speed;
 public:
-	Player(); //to chose different textures
+	Player();
 	~Player();
 
-	sf::FloatRect getBounds();
-	void addTexture(std::string file);
-	void switchTexture(int index);
-
-	void render(sf::RenderTarget* target);
-	void movePlayer1();
-	void movePlayer2();
-
+	void update();
+	void render(sf::RenderWindow* target);
+	void move();
 };
-

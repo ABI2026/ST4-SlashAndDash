@@ -22,6 +22,7 @@ void Game::run(){
 void Game::init(){
 	initWinow();
 	initVars();
+	initPlayer();
 }
 
 void Game::initWinow(){
@@ -42,9 +43,8 @@ void Game::initVars() {
 	world = new World;
 }
 
-void Game::initPlayer()
-{
-	player = new Player;
+void Game::initPlayer(){
+	this->player = new Player;
 }
 
 void Game::updateView() {
@@ -76,6 +76,7 @@ void Game::update(){
 	updatePollEvents();
 
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
+	player->update();
 }
 
 void Game::updateMenu() {
@@ -162,6 +163,7 @@ void Game::render() {
 	}
 	else {
 		world->render(this->window);
+		player->render(this->window);
 	}
 
 	window->display();

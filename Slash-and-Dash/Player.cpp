@@ -1,68 +1,28 @@
 #include "Player.h"
-#include <iostream>
 
-Player::Player()
-{
-	addTexture("Assets/Texture/test player.png");
+Player::Player() {
+	this->speed = 5;
+	tx.loadFromFile("assets/Texture/test player.png");
 	sp.setTexture(tx);
-	sp.setPosition(50.0f, 600.0f);
-	sp.setScale(0.5f, 0.5f);
 }
 
-Player::~Player() {}
+Player::~Player() {
 
-sf::FloatRect Player::getBounds()
-{
-	return sp.getGlobalBounds();
 }
 
-void Player::addTexture(std::string file)
-{
-	if (!tx.loadFromFile(file)) {
-		std::cout << "One Playertexture was not load corectly" << std::endl;
-		return;
-	}
-	playerTextures = tx;
+void Player::update() {
+	move();
 }
 
-void Player::switchTexture(int index)
-{
-	sf::Event ev{};
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) {
-		index++;
-	}
-
-	if (ev.type == sf::Event::TextEntered)
-	{
-		if (ev.text.unicode == 0x00DC) {
-			index--;
-		}
-	}
-}
-
-void Player::render(sf::RenderTarget* target){
+void Player::render(sf::RenderWindow* target) {
 	target->draw(sp);
 }
 
-void Player::movePlayer1()
-{
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		sp.move(-1.0, 0.0);
-	}
-
+void Player::move() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		sp.move(1.0, 0.0);
+		this->sp.move(this->speed * 1,0);
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+		this->sp.move(this->speed * -1, 0);
 	}
 }
-
-void Player::movePlayer2()
-{
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		sp.move(-1.0, 0.0);
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		sp.move(1.0, 0.0);
-	}
-}
-
