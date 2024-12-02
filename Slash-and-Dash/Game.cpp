@@ -13,8 +13,11 @@ Game::~Game(){
 }
 
 void Game::run(){
+	sf::Clock clock;
 	while (this->window->isOpen()) {
-		update();
+		sf::Time deltaTime = clock.restart();
+
+		update(deltaTime);
 		render();
 	}
 }
@@ -72,11 +75,11 @@ void Game::updatePlayer(){
 
 }
 
-void Game::update(){
+void Game::update(sf::Time deltaTime){
 	updatePollEvents();
 
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
-	player->update();
+	player->update(deltaTime);
 }
 
 void Game::updateMenu() {

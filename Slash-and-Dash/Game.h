@@ -31,7 +31,7 @@ private:
 	void initVars();
 	void initPlayer();
 
-	void update();
+	void update(sf::Time deltaTime);
 	void updateMenu();
 	void updateView();
 	void updatePlayer();

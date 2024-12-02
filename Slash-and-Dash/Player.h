@@ -10,7 +10,7 @@ public:
 	Player();
 	~Player();
 
-	void update();
+	void update(sf::Time deltaTime);
 	void render(sf::RenderWindow* target);
-	void move();
+	void move(sf::Time deltaTime);
 };
