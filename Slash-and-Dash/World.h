@@ -39,7 +39,7 @@ public:
 	void paraMove();
 	//void moveParaEffekt();
 
-	
+	void update();
 	void render(sf::RenderTarget* t);
 };
 

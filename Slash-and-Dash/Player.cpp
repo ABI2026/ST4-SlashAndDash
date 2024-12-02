@@ -1,9 +1,10 @@
 #include "Player.h"
 
 Player::Player() {
-	this->speed = 5;
+	this->speed = 1.5;
 	tx.loadFromFile("assets/Texture/test player.png");
 	sp.setTexture(tx);
+	sp.setScale(0.5, 0.5);
 }
 
 Player::~Player() {

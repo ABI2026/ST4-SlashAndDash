@@ -2,7 +2,7 @@
 #include <iostream>
 
 World::World(){
-	push_back_backgroundTexture("Assets/Texture/Sprite-0001background.png");  // Texturen ändern 
+	push_back_backgroundTexture("Assets/Texture/background-background.png");  // Texturen ändern 
 	push_back_foregroundTexture("Assets/Texture/trees.png");
 	push_back_middlegroundTexture("Assets/Texture/mountains.png");
 	push_back_durchsichtigVorne("Assets/Texture/Nebel-Hell.png");
@@ -103,6 +103,10 @@ void World::paraMove()
 
 // update Grafiken abh�ngig von dem Fenster
 
+void World::update() {
+
+}
+
 void World::render(sf::RenderTarget* t){
 	
 
@@ -117,7 +121,7 @@ void World::render(sf::RenderTarget* t){
 	
 
 	hintergrund.setPosition(-10,0);
-	hintergrund.setScale(0.79,0.6);
+	hintergrund.setScale(0.79*4,0.6*4);
 	midground.setPosition(0, 50);
 	midground.setScale(0, 0);
 	forground.setPosition(0, 0);
