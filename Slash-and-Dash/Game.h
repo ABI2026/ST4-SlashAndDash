@@ -22,6 +22,8 @@ private:
 	float viewWidth;
 	float viewHeight;
 
+	float camOffset;
+
 	Menu* menu;
 	World* world;
 	Player* player;
@@ -34,7 +36,8 @@ private:
 	void update(sf::Time deltaTime);
 	void updateMenu();
 	void updateView();
-	void updatePlayer();
+	void updatePlayer(sf::Time deltaTime);
+	void updateCamera();
 	void updatePollEvents();
 
 public:

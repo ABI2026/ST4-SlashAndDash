@@ -11,6 +11,10 @@ public:
 	~Player();
 
 	void update(sf::Time deltaTime);
-	void render(sf::RenderWindow* target);
 	void move(sf::Time deltaTime);
+	void render(sf::RenderWindow* target);
+
+	sf::Vector2f getPosition() const {
+		return sp.getPosition();
+	}
 };

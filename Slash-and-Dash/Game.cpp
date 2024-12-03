@@ -1,7 +1,6 @@
 #include "Game.h"
 #include "Player.h"
 
-#include <iostream>
 Game::Game() {
 	viewWidth = 960;
 	viewHeight = 540;
@@ -29,20 +28,18 @@ void Game::init(){
 }
 
 void Game::initWinow(){
-	window = new sf::RenderWindow(sf::VideoMode(960, 540), "Slash & Dash", sf::Style::Default);
-	window->setFramerateLimit(144);
-	window->setVerticalSyncEnabled(true);
+	window = new sf::RenderWindow(sf::VideoMode(960, 540), "Slash & Dash", sf::Style::Close);
 
 	gameView.setSize(viewWidth, viewHeight);
 	gameView.setCenter(viewWidth / 2, viewHeight / 2);
 	updateView();
+	window->setVerticalSyncEnabled(true);
 }
 
 void Game::initVars() {
 	state = State::inMainMenu;
 	fullscreen = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
-
 	world = new World;
 }
 
@@ -51,35 +48,47 @@ void Game::initPlayer(){
 }
 
 void Game::updateView() {
+	// aspect ratio of the window
 	float windowRatio = float(window->getSize().x) / float(window->getSize().y);
-	float viewRatio = viewWidth / viewHeight;
+	float viewRatio = 16.f/9.f;
 
 	float sizeX = 1.f;
 	float sizeY = 1.f;
 	float posX = 0.f;
 	float posY = 0.f;
 
+	// Adjust the viewport size and position based on the aspect ratios
 	if (windowRatio > viewRatio) {
+		// Window is wider than the view
 		sizeX = viewRatio / windowRatio;
 		posX = (1.f - sizeX) / 2.f;
 	}
 	else {
+		// Window is taller than the view
 		sizeY = windowRatio / viewRatio;
 		posY = (1.f - sizeY) / 2.f;
 	}
 
+	// Set the viewport of the game view; posX und posY = oben links
 	gameView.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
 }
 
-void Game::updatePlayer(){
 
+void Game::updatePlayer(sf::Time deltaTime){
+	player->update(deltaTime);
+	updateCamera();
+}
+
+void Game::updateCamera() {
+	//mit 2 spielern camOffset = (player1.getPosition().x + player2.getPosition().x) / 2 - viewWidth / 2; hoffe ich
+	camOffset = (player->getPosition().x - viewWidth / 2)/2;
 }
 
 void Game::update(sf::Time deltaTime){
 	updatePollEvents();
-
+	updatePlayer(deltaTime);
+	world->update(camOffset);
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
-	player->update(deltaTime);
 }
 
 void Game::updateMenu() {
@@ -115,7 +124,8 @@ void Game::updateMenu() {
             break;
 		case Menu::ResolutionMenu:
 			std::vector<int> res = menu->getSelectetResolution(selectedOption);
-			window->create(sf::VideoMode(sf::VideoMode::getDesktopMode()), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Titlebar);
+			window->create(sf::VideoMode(res[0],res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
+			menu->setState(Menu::ResolutionMenu, window->getSize());
 			break;
         }
         while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));
@@ -158,19 +168,21 @@ void Game::updatePollEvents(){
 void Game::render() {
 	window->clear();
 
+	gameView.setCenter(camOffset + viewWidth / 2, viewHeight / 2);
 	window->setView(gameView);
 
-	if (state == State::inGameMenu || state == State::inMainMenu) {
-		window->setView(window->getDefaultView());
-		menu->render(this->window);
-	}
-	else {
+	if (state == State::Playing) {
 		world->render(this->window);
 		player->render(this->window);
+	}
+	else if (state == State::inGameMenu || state == State::inMainMenu) {
+		window->setView(this->window->getDefaultView());
+		menu->render(this->window);
 	}
 
 	window->display();
 }
+
 
 sf::Event Game::getEvent() {
 	return e;
