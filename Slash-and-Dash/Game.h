@@ -2,6 +2,7 @@
 #include"SFML/Graphics.hpp"
 #include "Menu.h"
 #include "World.h"
+#include "SFML/Audio.hpp"
 
 class Player;
 
@@ -10,6 +11,8 @@ private:
 	sf::RenderWindow* window;
 	bool fullscreen;
 	sf::Event e;
+
+	sf::Music mBg;
 
 	enum State {
 		inMainMenu,

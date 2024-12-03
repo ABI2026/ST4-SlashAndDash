@@ -43,6 +43,11 @@ void Game::initVars() {
 	fullscreen = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
 	world = new World;
+
+	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
+	mBg.setVolume(1);
+	mBg.play();
+	mBg.setLoop(true);
 }
 
 void Game::initPlayer() {
@@ -110,6 +115,8 @@ void Game::updateMenu() {
 			break;
 
 		case Menu::SoundMenu:
+			if (selectedOption == 0) mBg.play();
+			if (selectedOption == 1) mBg.pause();
 			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
 			break;
 		case Menu::DisplayMenu:

@@ -22,5 +22,10 @@ Layer::Layer(std::string path, float speed, int layerN) {
 }
 
 void Layer::update(float playerMovement) {
-	sp.move(playerMovement * speed, 0);
+	sf::FloatRect bounds = sp.getGlobalBounds();
+	float newPosX = sp.getPosition().x + playerMovement * -speed;
+
+	if (newPosX < 0 && newPosX + bounds.width > 960) {
+		sp.move(playerMovement * -speed, 0);
+	}
 }
