@@ -33,9 +33,9 @@ void World::setLvl(int index) {
 	}
 }
 
-void World::update(float camOff) {
+void World::update(float playerMovement) {
 	for (Layer* layer : level[lvlIndex]) {
-		layer->update(camOff);
+		layer->update(playerMovement);
 	}
 }
 

@@ -7,11 +7,13 @@ Game::Game() {
 	init();
 }
 
-Game::~Game(){
+Game::~Game() {
 	delete this->window;
+	delete this->player;
+	delete this->world;
 }
 
-void Game::run(){
+void Game::run() {
 	sf::Clock clock;
 	while (this->window->isOpen()) {
 		sf::Time deltaTime = clock.restart();
@@ -21,13 +23,13 @@ void Game::run(){
 	}
 }
 
-void Game::init(){
+void Game::init() {
 	initWinow();
 	initVars();
 	initPlayer();
 }
 
-void Game::initWinow(){
+void Game::initWinow() {
 	window = new sf::RenderWindow(sf::VideoMode(960, 540), "Slash & Dash", sf::Style::Close);
 
 	gameView.setSize(viewWidth, viewHeight);
@@ -43,14 +45,14 @@ void Game::initVars() {
 	world = new World;
 }
 
-void Game::initPlayer(){
+void Game::initPlayer() {
 	this->player = new Player;
 }
 
 void Game::updateView() {
 	// aspect ratio of the window
 	float windowRatio = float(window->getSize().x) / float(window->getSize().y);
-	float viewRatio = 16.f/9.f;
+	float viewRatio = 16.f / 9.f;
 
 	float sizeX = 1.f;
 	float sizeY = 1.f;
@@ -73,45 +75,44 @@ void Game::updateView() {
 	gameView.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
 }
 
-
-void Game::updatePlayer(sf::Time deltaTime){
+void Game::updatePlayer(sf::Time deltaTime) {
 	player->update(deltaTime);
-	updateCamera();
 }
 
-void Game::updateCamera() {
-	//mit 2 spielern camOffset = (player1.getPosition().x + player2.getPosition().x) / 2 - viewWidth / 2; hoffe ich
-	camOffset = (player->getPosition().x - viewWidth / 2)/2;
-}
-
-void Game::update(sf::Time deltaTime){
+void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
+
+	sf::Vector2f prevPosition = player->getPosition();
 	updatePlayer(deltaTime);
-	world->update(camOffset);
+	sf::Vector2f newPosition = player->getPosition();
+	sf::Vector2f playerMovement = newPosition - prevPosition;
+
+	world->update(playerMovement.x);
+
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
 }
 
 void Game::updateMenu() {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-        int selectedOption = menu->getSelectedOption();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		int selectedOption = menu->getSelectedOption();
 
-        switch (menu->getState()) {
-        case Menu::MainMenu:
+		switch (menu->getState()) {
+		case Menu::MainMenu:
 			if (selectedOption == 0) state = State::Playing;
-            if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
-            else if (selectedOption == 2) window->close();
-            break;
+			if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
+			else if (selectedOption == 2) window->close();
+			break;
 
-        case Menu::SettingsMenu:
-            if (selectedOption == 0) menu->setState(Menu::SoundMenu, window->getSize());
-            else if (selectedOption == 1) menu->setState(Menu::DisplayMenu, window->getSize());
-            else if (selectedOption == 2) menu->setState(Menu::MainMenu, window->getSize());
-            break;
+		case Menu::SettingsMenu:
+			if (selectedOption == 0) menu->setState(Menu::SoundMenu, window->getSize());
+			else if (selectedOption == 1) menu->setState(Menu::DisplayMenu, window->getSize());
+			else if (selectedOption == 2) menu->setState(Menu::MainMenu, window->getSize());
+			break;
 
-        case Menu::SoundMenu:
+		case Menu::SoundMenu:
 			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
 			break;
-        case Menu::DisplayMenu:
+		case Menu::DisplayMenu:
 			if (selectedOption == 0) {
 				fullscreen = !fullscreen;
 				window->create(sf::VideoMode(960, 540),
@@ -120,32 +121,32 @@ void Game::updateMenu() {
 				menu->setState(Menu::DisplayMenu, window->getSize());
 			}
 			if (selectedOption == 1) menu->setState(Menu::ResolutionMenu, window->getSize());
-            if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
-            break;
+			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
+			break;
 		case Menu::ResolutionMenu:
 			std::vector<int> res = menu->getSelectetResolution(selectedOption);
-			window->create(sf::VideoMode(res[0],res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
+			window->create(sf::VideoMode(res[0], res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
 			menu->setState(Menu::ResolutionMenu, window->getSize());
 			break;
-        }
-        while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));
-    }
+		}
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));
+	}
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        menu->moveUp();
-        while (sf::Keyboard::isKeyPressed(sf::Keyboard::W));
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        menu->moveDown();
-        while (sf::Keyboard::isKeyPressed(sf::Keyboard::S));
-    }
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+		menu->moveUp();
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::W));
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+		menu->moveDown();
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::S));
+	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 		menu->setState(Menu::MainMenu, window->getSize());
 	}
 }
 
-void Game::updatePollEvents(){
-	
+void Game::updatePollEvents() {
+
 	while (window->pollEvent(e)) {
 		if (e.type == sf::Event::Closed) {
 			window->close();
@@ -154,7 +155,7 @@ void Game::updatePollEvents(){
 			if (state == State::Playing) {
 				state = State::inGameMenu;
 			}
-			else if(state == State::inGameMenu){
+			else if (state == State::inGameMenu) {
 				state = State::Playing;
 			}
 		}
@@ -167,10 +168,7 @@ void Game::updatePollEvents(){
 
 void Game::render() {
 	window->clear();
-
-	gameView.setCenter(camOffset + viewWidth / 2, viewHeight / 2);
 	window->setView(gameView);
-
 	if (state == State::Playing) {
 		world->render(this->window);
 		player->render(this->window);
@@ -182,7 +180,6 @@ void Game::render() {
 
 	window->display();
 }
-
 
 sf::Event Game::getEvent() {
 	return e;
