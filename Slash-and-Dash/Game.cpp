@@ -1,69 +1,193 @@
 #include "Game.h"
+#include "Player.h"
 
 Game::Game() {
+	viewWidth = 960;
+	viewHeight = 540;
 	init();
 }
 
-Game::~Game(){
+Game::~Game() {
 	delete this->window;
+	delete this->player;
+	delete this->world;
 }
 
-void Game::run(){
+void Game::run() {
+	sf::Clock clock;
 	while (this->window->isOpen()) {
-		update();
+		sf::Time deltaTime = clock.restart();
+
+		update(deltaTime);
 		render();
 	}
 }
 
-void Game::init(){
+void Game::init() {
 	initWinow();
 	initVars();
+	initPlayer();
 }
 
-void Game::initWinow(){
-	window = new sf::RenderWindow(sf::VideoMode(800, 600), "Slash & Dash", sf::Style::Close);
-	window->setFramerateLimit(144);
+void Game::initWinow() {
+	window = new sf::RenderWindow(sf::VideoMode(960, 540), "Slash & Dash", sf::Style::Close);
+
+	gameView.setSize(viewWidth, viewHeight);
+	gameView.setCenter(viewWidth / 2, viewHeight / 2);
+	updateView();
 	window->setVerticalSyncEnabled(true);
 }
 
 void Game::initVars() {
-	inMenu = false;
+	state = State::inMainMenu;
+	fullscreen = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
+	world = new World;
+
+	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
+	mBg.setVolume(1);
+	mBg.play();
+	mBg.setLoop(true);
 }
 
-void Game::update(){
+void Game::initPlayer() {
+	this->player = new Player;
+}
+
+void Game::updateView() {
+	// aspect ratio of the window
+	float windowRatio = float(window->getSize().x) / float(window->getSize().y);
+	float viewRatio = 16.f / 9.f;
+
+	float sizeX = 1.f;
+	float sizeY = 1.f;
+	float posX = 0.f;
+	float posY = 0.f;
+
+	// Adjust the viewport size and position based on the aspect ratios
+	if (windowRatio > viewRatio) {
+		// Window is wider than the view
+		sizeX = viewRatio / windowRatio;
+		posX = (1.f - sizeX) / 2.f;
+	}
+	else {
+		// Window is taller than the view
+		sizeY = windowRatio / viewRatio;
+		posY = (1.f - sizeY) / 2.f;
+	}
+
+	// Set the viewport of the game view; posX und posY = oben links
+	gameView.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
+}
+
+void Game::updatePlayer(sf::Time deltaTime) {
+	player->update(deltaTime);
+}
+
+void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
 
-	if (inMenu) updateMenu();
+	sf::Vector2f prevPosition = player->getPosition();
+	updatePlayer(deltaTime);
+	sf::Vector2f newPosition = player->getPosition();
+	sf::Vector2f playerMovement = newPosition - prevPosition;
+
+	world->update(playerMovement.x);
+
+	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
 }
 
 void Game::updateMenu() {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		int selectedOption = menu->getSelectedOption();
+
+		switch (menu->getState()) {
+		case Menu::MainMenu:
+			if (selectedOption == 0) state = State::Playing;
+			if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
+			else if (selectedOption == 2) window->close();
+			break;
+
+		case Menu::SettingsMenu:
+			if (selectedOption == 0) menu->setState(Menu::SoundMenu, window->getSize());
+			else if (selectedOption == 1) menu->setState(Menu::DisplayMenu, window->getSize());
+			else if (selectedOption == 2) menu->setState(Menu::MainMenu, window->getSize());
+			break;
+
+		case Menu::SoundMenu:
+			if (selectedOption == 0) mBg.play();
+			if (selectedOption == 1) mBg.pause();
+			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
+			break;
+		case Menu::DisplayMenu:
+			if (selectedOption == 0) {
+				fullscreen = !fullscreen;
+				window->create(sf::VideoMode(960, 540),
+					"Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
+				updateView();
+				menu->setState(Menu::DisplayMenu, window->getSize());
+			}
+			if (selectedOption == 1) menu->setState(Menu::ResolutionMenu, window->getSize());
+			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
+			break;
+		case Menu::ResolutionMenu:
+			std::vector<int> res = menu->getSelectetResolution(selectedOption);
+			window->create(sf::VideoMode(res[0], res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
+			menu->setState(Menu::ResolutionMenu, window->getSize());
+			break;
+		}
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));
+	}
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		menu->moveUp();
 		while (sf::Keyboard::isKeyPressed(sf::Keyboard::W));
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 		menu->moveDown();
 		while (sf::Keyboard::isKeyPressed(sf::Keyboard::S));
 	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+		menu->setState(Menu::MainMenu, window->getSize());
+	}
 }
 
-void Game::updatePollEvents(){
-	sf::Event e;
+void Game::updatePollEvents() {
+
 	while (window->pollEvent(e)) {
 		if (e.type == sf::Event::Closed) {
 			window->close();
 		}
 		if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Escape) {
-			inMenu = !inMenu;
+			if (state == State::Playing) {
+				state = State::inGameMenu;
+			}
+			else if (state == State::inGameMenu) {
+				state = State::Playing;
+			}
+		}
+		if (e.type == sf::Event::Resized) {
+			sf::FloatRect visibleArea(0, 0, e.size.width, e.size.height);
+			updateView();
 		}
 	}
 }
 
-void Game::render(){
+void Game::render() {
 	window->clear();
-
-	if (inMenu) menu->render(this->window);
+	window->setView(gameView);
+	if (state == State::Playing) {
+		world->render(this->window);
+		player->render(this->window);
+	}
+	else if (state == State::inGameMenu || state == State::inMainMenu) {
+		window->setView(this->window->getDefaultView());
+		menu->render(this->window);
+	}
 
 	window->display();
+}
+
+sf::Event Game::getEvent() {
+	return e;
 }
