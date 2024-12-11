@@ -45,7 +45,7 @@ void Game::initVars() {
 	world = new World;
 
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
-	mBg.setVolume(1);
+	mBg.setVolume(10);
 	mBg.play();
 	mBg.setLoop(true);
 }
@@ -83,18 +83,25 @@ void Game::updateView() {
 }
 
 void Game::updatePlayer(sf::Time deltaTime) {
-	sf::Vector2f prevPosition1 = player->getPosition();
-	sf::Vector2f prevPosition2 = player2->getPosition();
+	sf::Vector2f prevPos1 = player->getPosition();
+	sf::Vector2f prevPos2 = player2->getPosition();
+	sf::Vector2f prevAveragePosition = (prevPos1 + prevPos2) * 0.5f;
 
 	player->update(deltaTime);
 	player2->update(deltaTime);
 
-	sf::Vector2f playerMovement1 = player->getPosition() - prevPosition1;
-	sf::Vector2f playerMovement2 = player2->getPosition() - prevPosition2;
+	sf::Vector2f currentPos1 = player->getPosition();
+	sf::Vector2f currentPos2 = player2->getPosition();
+	sf::Vector2f currentAveragePosition = (currentPos1 + currentPos2) * 0.5f;
 
-	world->update((playerMovement1.x / playerMovement2.x));
+	sf::Vector2f movement = currentAveragePosition - prevAveragePosition;
+	sf::Vector2f movement1 = currentPos1 - prevPos1;
+	sf::Vector2f movement2 = currentPos2 - prevPos2;
+
+	float directionDot = movement1.x * movement2.x + movement1.y * movement2.y;
+
+	world->update(directionDot > 0 ? movement.x : 0);
 }
-
 
 void Game::update(sf::Time deltaTime) {
 	updatePollEvents();

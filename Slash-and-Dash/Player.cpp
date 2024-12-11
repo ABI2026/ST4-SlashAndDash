@@ -1,6 +1,7 @@
 #include "Player.h"
 
-Player::Player(unsigned int joystickId) : joystickId(joystickId) {
+Player::Player(unsigned int joystickId){
+    this->joystickId = joystickId;
 	this->speed = 100;
 	tx.loadFromFile("assets/Texture/swordpulling/animation-sword-pulling4.png");
 	sp.setTexture(tx);
