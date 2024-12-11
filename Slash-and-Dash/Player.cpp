@@ -1,72 +1,34 @@
 #include "Player.h"
-#include <iostream>
 
-Player::Player(int index)
-{
-	this->index = index;
-	if (index < playerTextures.size()) {
-		tx = playerTextures[index];
-		sp.setTexture(tx);
-	}
-	sp.setPosition(50.0f, 600.0f);
-	sp.setScale(0.5f, 0.5f);
+Player::Player() {
+	this->speed = 100;
+	tx.loadFromFile("assets/Texture/swordpulling/animation-sword-pulling4.png");
+	sp.setTexture(tx);
+	sp.setScale(0.8, 0.8);
+	sp.setPosition(480, + 140);
 }
 
-Player::~Player() {}
+Player::~Player() {
 
-sf::FloatRect Player::getBounds()
-{
-	return sp.getGlobalBounds();
 }
 
-void Player::addTexture(std::string file)
-{
-	if (!tx.loadFromFile(file)) {
-		std::cout << "One Playertexture was not load corectly" << std::endl;
-		return;
-	}
-	playerTextures.push_back(tx);
+void Player::update(sf::Time deltaTime) {
+	move(deltaTime);
 }
 
-void Player::switchTexture(int index)
-{
-	sp.setTexture(playerTextures[index]);
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Add)) {
-		index++;
-	}
-
-	if (game.getEvent().type == sf::Event::TextEntered)
-	{
-		if (game.getEvent().text.unicode == 0x00DC) {
-			index--;
-		}
-	}
-}
-
-void Player::render(sf::RenderTarget* target){
+void Player::render(sf::RenderWindow* target) {
 	target->draw(sp);
 }
 
-void Player::movePlayer1()
-{
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		sp.move(-1.0, 0.0);
-	}
+void Player::move(sf::Time deltaTime) {
+	float dt = deltaTime.asSeconds();
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		sp.move(1.0, 0.0);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && (sp.getPosition().x + 20) < 960) {
+		this->sp.move(this->speed * dt,0);
+		sp.setScale(0.8, 0.8);
 	}
-}
-
-void Player::movePlayer2()
-{
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		sp.move(-1.0, 0.0);
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		sp.move(1.0, 0.0);
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sp.getPosition().x > 0) {
+		this->sp.move(this->speed * -dt, 0);
+		sp.setScale(-0.8, 0.8);
 	}
 }
-
