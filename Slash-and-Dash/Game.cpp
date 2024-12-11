@@ -51,8 +51,9 @@ void Game::initVars() {
 }
 
 void Game::initPlayer() {
-	this->player = new Player;
-	player2 = new Player;
+	this->player = new Player(0);
+	this->player2 = new Player(1);
+	this->player2->setPosition(520, 140);
 }
 
 void Game::updateView() {
@@ -82,19 +83,22 @@ void Game::updateView() {
 }
 
 void Game::updatePlayer(sf::Time deltaTime) {
+	sf::Vector2f prevPosition1 = player->getPosition();
+	sf::Vector2f prevPosition2 = player2->getPosition();
+
 	player->update(deltaTime);
+	player2->update(deltaTime);
+
+	sf::Vector2f playerMovement1 = player->getPosition() - prevPosition1;
+	sf::Vector2f playerMovement2 = player2->getPosition() - prevPosition2;
+
+	world->update((playerMovement1.x / playerMovement2.x));
 }
+
 
 void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
-
-	sf::Vector2f prevPosition = player->getPosition();
 	updatePlayer(deltaTime);
-	sf::Vector2f newPosition = player->getPosition();
-	sf::Vector2f playerMovement = newPosition - prevPosition;
-
-	world->update(playerMovement.x);
-
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
 }
 
@@ -180,6 +184,7 @@ void Game::render() {
 	if (state == State::Playing) {
 		world->render(this->window);
 		player->render(this->window);
+		player2->render(this->window);
 	}
 	else if (state == State::inGameMenu || state == State::inMainMenu) {
 		window->setView(this->window->getDefaultView());
