@@ -29,6 +29,7 @@ private:
 	Menu* menu;
 	World* world;
 	Player* player;
+	Player* player2;
 
 	void init();
 	void initWinow();

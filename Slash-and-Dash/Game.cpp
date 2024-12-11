@@ -52,6 +52,7 @@ void Game::initVars() {
 
 void Game::initPlayer() {
 	this->player = new Player;
+	player2 = new Player;
 }
 
 void Game::updateView() {
