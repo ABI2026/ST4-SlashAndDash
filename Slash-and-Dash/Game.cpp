@@ -115,7 +115,11 @@ void Game::updateMenu() {
 
 		switch (menu->getState()) {
 		case Menu::MainMenu:
-			if (selectedOption == 0) state = State::Playing;
+			if (selectedOption == 0) {
+				state = State::Playing;
+				player->start_animation(0);
+				player2->start_animation(1);
+			}
 			if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
 			else if (selectedOption == 2) window->close();
 			break;
