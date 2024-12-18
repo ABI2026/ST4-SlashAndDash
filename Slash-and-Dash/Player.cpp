@@ -79,46 +79,64 @@ void Player::move(sf::Time deltaTime) {
 }
 
 void Player::play_animation() {
-    if (curr_a_i == 1 && is_animating) {
-        if (clock.getElapsedTime().asSeconds() > frame_duration && current_frame < swordPullingTextures1.size()- 1) {
-            current_frame += 1;
-            sp.setTexture(swordPullingTextures1[current_frame]);
-            clock.restart();
-        }
-        else if (current_frame == swordPullingTextures1.size()) {
-            is_animating = false;
-        }
-    }
-    if (curr_a_i == 0 && is_animating) {
-        if (clock.getElapsedTime().asSeconds() > frame_duration && current_frame < swordPullingTextures2.size() - 1) {
-            current_frame += 1;
-            sp.setTexture(swordPullingTextures2[current_frame]);
-            clock.restart();
-        }
-        else if (current_frame == swordPullingTextures2.size()) {
-            is_animating = false;
+    if (is_animating) {
+        switch (curr_a_i) {
+        case 0:
+            if (clock.getElapsedTime().asSeconds() > frame_duration && current_frame < swordPullingTextures2.size() - 1) {
+                current_frame += 1;
+                sp.setTexture(swordPullingTextures2[current_frame]);
+                clock.restart();
+            }
+            else if (current_frame == swordPullingTextures2.size()) {
+                is_animating = false;
+            }
+            break;
+        case 1:
+            if (clock.getElapsedTime().asSeconds() > frame_duration && current_frame < swordPullingTextures1.size() - 1) {
+                current_frame += 1;
+                sp.setTexture(swordPullingTextures1[current_frame]);
+                clock.restart();
+            }
+            else if (current_frame == swordPullingTextures1.size()) {
+                is_animating = false;
+            }
+            break;
+        case 2:
+            if (clock.getElapsedTime().asSeconds() > frame_duration && current_frame < walkingTextures1.size() - 1) {
+                current_frame += 1;
+                sp.setTexture(walkingTextures1[current_frame]);
+                clock.restart();
+            }
+            else if (current_frame == walkingTextures1.size()) {
+                is_animating = false;
+            }
+            break;
+        default:
+            break;
         }
     }
 }
 
 void Player::load_animations() {
-    texture1.loadFromFile("assets/Texture/swordpulling/animation-sword-pulling1.png");
-    texture2.loadFromFile("assets/Texture/swordpulling/animation-sword-pulling2.png");
-    texture3.loadFromFile("assets/Texture/swordpulling/animation-sword-pulling3.png");
-    texture4.loadFromFile("assets/Texture/swordpulling/animation-sword-pulling4.png");
-    swordPullingTextures1.push_back(texture1);
-    swordPullingTextures1.push_back(texture2);
-    swordPullingTextures1.push_back(texture3);
-    swordPullingTextures1.push_back(texture4);
+    for (int i = 1; i <= 4; ++i) {
+        sf::Texture texture1;
+        texture1.loadFromFile("assets/Texture/swordpulling/animation-sword-pulling" + std::to_string(i) + ".png");
+        swordPullingTextures1.push_back(texture1);
 
-    texture1.loadFromFile("assets/Texture/swordpulling2/animation-sword-pulling1.2.png");
-    texture2.loadFromFile("assets/Texture/swordpulling2/animation-sword-pulling2.2.png");
-    texture3.loadFromFile("assets/Texture/swordpulling2/animation-sword-pulling3.2.png");
-    texture4.loadFromFile("assets/Texture/swordpulling2/animation-sword-pulling4.2.png");
-    swordPullingTextures2.push_back(texture1);
-    swordPullingTextures2.push_back(texture2);
-    swordPullingTextures2.push_back(texture3);
-    swordPullingTextures2.push_back(texture4);
+        sf::Texture texture2;
+        texture2.loadFromFile("assets/Texture/swordpulling2/animation-sword-pulling" + std::to_string(i) + ".2.png");
+        swordPullingTextures2.push_back(texture2);
+    }
+    for (int i = 1; i <= 4; ++i) {
+        sf::Texture texture1;
+        texture1.loadFromFile("assets/Texture/walking1/animation-walking" + std::to_string(i) + ".png");
+        walkingTextures1.push_back(texture1);
+
+        sf::Texture texture2;
+        texture2.loadFromFile("assets/Texture/walking2/animation-walking2." + std::to_string(i) + ".png");
+        walkingTextures2.push_back(texture2);
+    }
+
 }
 
 void Player::start_animation(int index) {

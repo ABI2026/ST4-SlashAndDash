@@ -18,6 +18,9 @@ class Player {
 	std::vector<sf::Texture> swordPullingTextures1;
 	std::vector<sf::Texture> swordPullingTextures2;
 
+	std::vector<sf::Texture> walkingTextures1;
+	std::vector<sf::Texture> walkingTextures2;
+
 	void play_animation();
 
 	unsigned int joystickId;
