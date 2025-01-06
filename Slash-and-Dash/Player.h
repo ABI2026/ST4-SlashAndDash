@@ -2,7 +2,6 @@
 #include "SFML/Graphics.hpp"
 
 class Player {
-	static int a;
 
 	sf::Texture tx;
 	sf::Sprite sp;
@@ -14,6 +13,7 @@ class Player {
 	int curr_a_i;
 	float frame_duration = 0.25;
 	bool is_animating = false;
+	bool is_walking = false;
 
 	std::vector<sf::Texture> swordPullingTextures1;
 	std::vector<sf::Texture> swordPullingTextures2;

@@ -1,42 +1,41 @@
 #include "Player.h"
 #include <iostream>
 
-int Player::a = 1;
-
-Player::Player(unsigned int joystickId){
+Player::Player(unsigned int joystickId) {
     this->joystickId = joystickId;
-	this->speed = 100;
+    this->speed = 100;
     tx.loadFromFile("assets/Texture/swordpulling2/animation-sword-pulling1.2.png");
-    if(a != 1){
+    if (joystickId != 0) {
         tx.loadFromFile("assets/Texture/swordpulling/animation-sword-pulling1.png");
     }
-	sp.setTexture(tx);
-	sp.setScale(0.8, 0.8);
-    if (a == 1) {
+    sp.setTexture(tx);
+    sp.setScale(0.8, 0.8);
+    if (joystickId == 0) {
         sp.setPosition(50, 140);
     }
     else {
         sp.setScale(-.8, 0.8);
     }
-    a++;
     load_animations();
-}
-
-Player::~Player() {
-
+    frame_duration = 0.1f; // frame in s
+    is_walking = false;
+    is_animating = false;
+    current_frame = 0;
 }
 
 void Player::update(sf::Time deltaTime) {
-	move(deltaTime);
+    move(deltaTime);
+
+    if (is_walking) {
+        start_animation(2);
+    }
+    else if (!is_walking) {
+        is_animating = false;
+        sp.setTexture(tx);
+        current_frame = 0;
+    }
+
     play_animation();
-}
-
-void Player::render(sf::RenderWindow* target) {
-	target->draw(sp);
-}
-
-void Player::setPosition(int a, int b) {
-    sp.setPosition(a, b);
 }
 
 void Player::move(sf::Time deltaTime) {
@@ -54,7 +53,7 @@ void Player::move(sf::Time deltaTime) {
             sp.setScale(-0.8, 0.8);
         }
     }
-    else if(joystickId == 0){
+    else if (joystickId == 0) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && (sp.getPosition().x + 20) < 960) {
             movementX = this->speed * dt;
             sp.setScale(0.8, 0.8);
@@ -74,45 +73,40 @@ void Player::move(sf::Time deltaTime) {
             sp.setScale(-0.8, 0.8);
         }
     }
+    if (movementX != 0) {
+        is_walking = true;
+    }
+    else {
+        is_walking = false;
+    }
 
     sp.move(movementX, 0);
 }
 
 void Player::play_animation() {
     if (is_animating) {
+        std::vector<sf::Texture>* currentAnimation = nullptr;
+
         switch (curr_a_i) {
         case 0:
-            if (clock.getElapsedTime().asSeconds() > frame_duration && current_frame < swordPullingTextures2.size() - 1) {
-                current_frame += 1;
-                sp.setTexture(swordPullingTextures2[current_frame]);
-                clock.restart();
-            }
-            else if (current_frame == swordPullingTextures2.size()) {
-                is_animating = false;
-            }
+            currentAnimation = &swordPullingTextures2;
             break;
         case 1:
-            if (clock.getElapsedTime().asSeconds() > frame_duration && current_frame < swordPullingTextures1.size() - 1) {
-                current_frame += 1;
-                sp.setTexture(swordPullingTextures1[current_frame]);
-                clock.restart();
-            }
-            else if (current_frame == swordPullingTextures1.size()) {
-                is_animating = false;
-            }
+            currentAnimation = &swordPullingTextures1;
             break;
         case 2:
-            if (clock.getElapsedTime().asSeconds() > frame_duration && current_frame < walkingTextures1.size() - 1) {
-                current_frame += 1;
-                sp.setTexture(walkingTextures1[current_frame]);
-                clock.restart();
-            }
-            else if (current_frame == walkingTextures1.size()) {
+            currentAnimation = (joystickId != 0) ? &walkingTextures1 : &walkingTextures2;
+            break;
+        }
+
+        if (currentAnimation && clock.getElapsedTime().asSeconds() > frame_duration) {
+            current_frame = (current_frame + 1) % currentAnimation->size();
+            sp.setTexture((*currentAnimation)[current_frame]);
+            clock.restart();
+
+            if (curr_a_i != 2 && current_frame == currentAnimation->size() - 1) {
                 is_animating = false;
             }
-            break;
-        default:
-            break;
         }
     }
 }
@@ -140,8 +134,24 @@ void Player::load_animations() {
 }
 
 void Player::start_animation(int index) {
+    if (is_animating && curr_a_i == index && index == 2) {
+        return;
+    }
+
     is_animating = true;
     curr_a_i = index;
     current_frame = 0;
     clock.restart();
+}
+
+void Player::setPosition(int a, int b) {
+    sp.setPosition(a, b);
+}
+
+void Player::render(sf::RenderWindow* target) {
+    target->draw(sp);
+}
+
+Player::~Player() {
+
 }
