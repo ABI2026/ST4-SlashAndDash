@@ -2,17 +2,41 @@
 #include "SFML/Graphics.hpp"
 
 class Player {
+
 	sf::Texture tx;
 	sf::Sprite sp;
+	sf::Clock clock;
+
+	sf::Texture texture1, texture2, texture3, texture4;
+
+	int current_frame = 0;
+	int curr_a_i;
+	float frame_duration = 0.25;
+	bool is_animating = false;
+	bool is_walking = false;
+
+	std::vector<sf::Texture> swordPullingTextures1;
+	std::vector<sf::Texture> swordPullingTextures2;
+
+	std::vector<sf::Texture> walkingTextures1;
+	std::vector<sf::Texture> walkingTextures2;
+
+	void play_animation();
+
+	unsigned int joystickId;
 
 	float speed;
 public:
-	Player();
+	Player(unsigned int joystickId);
 	~Player();
 
 	void update(sf::Time deltaTime);
 	void move(sf::Time deltaTime);
+	void start_animation(int);
+	void load_animations();
 	void render(sf::RenderWindow* target);
+
+	void setPosition(int a, int b);
 
 	sf::Vector2f getPosition() const {
 		return sp.getPosition();

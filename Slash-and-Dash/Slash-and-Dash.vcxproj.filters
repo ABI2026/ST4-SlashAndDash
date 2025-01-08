@@ -7,6 +7,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="World.cpp">
+=======
     <ClCompile Include="Menu.cpp">
       <Filter>Scripts</Filter>
     </ClCompile>
@@ -14,9 +17,7 @@
       <Filter>Scripts</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="Layer.cpp">
+>>>>>>> 9016be895c3a5eb6652ec39906545b9db22000ad
       <Filter>Scripts</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,6 +33,9 @@
     <ClInclude Include="Game.h">
       <Filter>Headers</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="World.h">
+=======
     <ClInclude Include="Menu.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -39,9 +43,7 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Layer.h">
+>>>>>>> 9016be895c3a5eb6652ec39906545b9db22000ad
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
