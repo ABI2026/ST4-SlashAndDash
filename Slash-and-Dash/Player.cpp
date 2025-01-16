@@ -17,7 +17,7 @@ Player::Player(unsigned int joystickId) {
         sp.setScale(-.8, 0.8);
     }
     load_animations();
-    frame_duration = 0.1f; // frame in s
+    frame_duration = 0.2f; // frame in s
     is_walking = false;
     is_animating = false;
     current_frame = 0;
