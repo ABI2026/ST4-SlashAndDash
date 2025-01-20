@@ -1,44 +1,38 @@
 #pragma once
+#include "Animation_Player.h"
 #include "SFML/Graphics.hpp"
 
 class Player {
+private:
+    unsigned int joystickId;
+    float speed;
+    sf::Sprite sp;
+    sf::Texture tx;
 
-	sf::Texture tx;
-	sf::Sprite sp;
-	sf::Clock clock;
+    // Texturen als Vektoren
+    std::vector<sf::Texture> swordPullingTextures1;
+    std::vector<sf::Texture> swordPullingTextures2;
+    std::vector<sf::Texture> walkingTextures1;
+    std::vector<sf::Texture> walkingTextures2;
 
-	sf::Texture texture1, texture2, texture3, texture4;
+    // Referenzen auf die Texturen
+    std::vector<sf::Texture*> walkingRefs;
+    std::vector<sf::Texture*> swordRefs;
+    Animation_Player* walkingAnimation;
+    Animation_Player* swordPullingAnimation;
+    bool is_walking;
 
-	int current_frame = 0;
-	int curr_a_i;
-	float frame_duration = 0.25;
-	bool is_animating = false;
-	bool is_walking = false;
+    float getMovementInput();
+    void load_animations();
+    void move(sf::Time deltaTime);
+    void setupAnimations();
 
-	std::vector<sf::Texture> swordPullingTextures1;
-	std::vector<sf::Texture> swordPullingTextures2;
-
-	std::vector<sf::Texture> walkingTextures1;
-	std::vector<sf::Texture> walkingTextures2;
-
-	void play_animation();
-
-	unsigned int joystickId;
-
-	float speed;
 public:
-	Player(unsigned int joystickId);
-	~Player();
-
-	void update(sf::Time deltaTime);
-	void move(sf::Time deltaTime);
-	void start_animation(int);
-	void load_animations();
-	void render(sf::RenderWindow* target);
-
-	void setPosition(int a, int b);
-
-	sf::Vector2f getPosition() const {
-		return sp.getPosition();
-	}
+    Player(unsigned int joystickId);
+    ~Player();
+    void update(sf::Time deltaTime);
+    sf::Vector2f get_Position();
+    void start_animation(int index);
+    void setPosition(int x, int y);
+    void render(sf::RenderWindow* target);
 };

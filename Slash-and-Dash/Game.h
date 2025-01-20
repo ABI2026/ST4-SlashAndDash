@@ -45,9 +45,7 @@ private:
 public:
 	Game();
 	virtual ~Game();
-
 	void run();
-
 	void render();
 
 	sf::Event getEvent();

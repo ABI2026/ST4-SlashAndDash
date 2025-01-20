@@ -7,12 +7,6 @@ Game::Game() {
 	init();
 }
 
-Game::~Game() {
-	delete this->window;
-	delete this->player;
-	delete this->world;
-}
-
 void Game::run() {
 	sf::Clock clock;
 	while (this->window->isOpen()) {
@@ -83,15 +77,15 @@ void Game::updateView() {
 }
 
 void Game::updatePlayer(sf::Time deltaTime) {
-	sf::Vector2f prevPos1 = player->getPosition();
-	sf::Vector2f prevPos2 = player2->getPosition();
+	sf::Vector2f prevPos1 = player->get_Position();
+	sf::Vector2f prevPos2 = player2->get_Position();
 	sf::Vector2f prevAveragePosition = (prevPos1 + prevPos2) * 0.5f;
 
 	player->update(deltaTime);
 	player2->update(deltaTime);
 
-	sf::Vector2f currentPos1 = player->getPosition();
-	sf::Vector2f currentPos2 = player2->getPosition();
+	sf::Vector2f currentPos1 = player->get_Position();
+	sf::Vector2f currentPos2 = player2->get_Position();
 	sf::Vector2f currentAveragePosition = (currentPos1 + currentPos2) * 0.5f;
 
 	sf::Vector2f movement = currentAveragePosition - prevAveragePosition;
@@ -118,7 +112,7 @@ void Game::updateMenu() {
 			if (selectedOption == 0) {
 				state = State::Playing;
 				player->start_animation(0);
-				player2->start_animation(1);
+				player2->start_animation(0);
 			}
 			if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
 			else if (selectedOption == 2) window->close();
@@ -207,4 +201,10 @@ void Game::render() {
 
 sf::Event Game::getEvent() {
 	return e;
+}
+
+Game::~Game() {
+	delete this->window;
+	delete this->player;
+	delete this->world;
 }
