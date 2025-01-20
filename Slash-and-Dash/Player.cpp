@@ -121,7 +121,7 @@ void Player::load_animations() {
         texture2.loadFromFile("assets/Texture/swordpulling2/animation-sword-pulling" + std::to_string(i) + ".2.png");
         swordPullingTextures2.push_back(texture2);
     }
-    for (int i = 1; i <= 4; ++i) {
+    for (int i = 1; i <= 7; ++i) {
         sf::Texture texture1;
         texture1.loadFromFile("assets/Texture/walking1/animation-walking" + std::to_string(i) + ".png");
         walkingTextures1.push_back(texture1);
