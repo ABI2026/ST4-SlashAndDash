@@ -18,6 +18,7 @@ public:
     void moveDown();
     int getSelectedOption() const;
 
+    void resetCurrentIndex();
     void updateOptionColor(int index, const sf::Color& color);
 
     void setState(MenuState newState, sf::Vector2u ws);
@@ -31,6 +32,10 @@ private:
     sf::Font font;
     int currentIndex;
     MenuState currentState;
+    sf::Texture bg;
+    sf::RectangleShape bg_shape;
+    sf::RectangleShape button_hover;
+    sf::Texture mainMenuTextures[3];
 
     void loadMenuOptions(const std::vector<std::string>& options, int cs, sf::Vector2u ws);
     void loadMainMenu(int cs, sf::Vector2u ws);

@@ -173,6 +173,7 @@ void Game::updatePollEvents() {
 				state = State::inGameMenu;
 			}
 			else if (state == State::inGameMenu) {
+				menu->resetCurrentIndex();
 				state = State::Playing;
 			}
 		}
@@ -192,7 +193,6 @@ void Game::render() {
 		player2->render(this->window);
 	}
 	else if (state == State::inGameMenu || state == State::inMainMenu) {
-		window->setView(this->window->getDefaultView());
 		menu->render(this->window);
 	}
 

@@ -1,5 +1,4 @@
 #include "Player.h"
-#include <iostream>
 
 Player::Player(unsigned int joystickId) {
     this->joystickId = joystickId;

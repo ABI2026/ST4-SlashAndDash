@@ -18,9 +18,10 @@ void World::loadLvl() {
 	//!lvl 1
 	std::vector<Layer*> lvl1;
 
-	lvl1.push_back(new Layer("Assets/Texture/lvl1_layer3.png", 1.f, 3));
-	lvl1.push_back(new Layer("Assets/Texture/lvl1_layer2.png", 0.3, 2));
-	lvl1.push_back(new Layer("Assets/Texture/lvl1_layer1.png", 0.4, 1));
+	lvl1.push_back(new Layer("assets/Texture/lvl1_layer3.png", 1.f, 3));
+	lvl1.push_back(new Layer("assets/Texture/lvl1_layer2.png", 0.3, 2));
+	//lvl1.push_back(new Layer("assets/Texture/nebel1.png", 0, 1));
+	lvl1.push_back(new Layer("assets/Texture/lvl1_layer1.png", 0.4, 1));
 	this->level.push_back(lvl1);
 
 	//!lvl 2
