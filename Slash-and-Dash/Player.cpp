@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <iostream>
 
 Player::Player(unsigned int joystickId) {
     this->joystickId = joystickId;
@@ -11,40 +12,19 @@ Player::Player(unsigned int joystickId) {
     sp.setScale(0.8, 0.8);
     if (joystickId == 0) {
         sp.setPosition(50, 140);
+        facing_right = true;
     }
     else {
         sp.setScale(-.8, 0.8);
+        facing_right = false;
     }
 
     load_animations();
     setupAnimations();
+
+    attack_range = 10;
     is_walking = false;
-}
-
-void Player::setupAnimations() {
-    if (joystickId != 0) {
-        for (sf::Texture& tex : walkingTextures1) {
-            walkingRefs.push_back(&tex);
-        }
-    }
-    else {
-        for (sf::Texture& tex : walkingTextures2) {
-            walkingRefs.push_back(&tex);
-        }
-    }
-    walkingAnimation = new Animation_Player(&sp, walkingRefs, 0.2f);
-
-    if (joystickId != 0) {
-        for (sf::Texture& tex : swordPullingTextures1) {
-            swordRefs.push_back(&tex);
-        }
-    }
-    else {
-        for (sf::Texture& tex : swordPullingTextures2) {
-            swordRefs.push_back(&tex);
-        }
-    }
-    swordPullingAnimation = new Animation_Player(&sp, swordRefs, 0.2f);
+    is_alive = true;
 }
 
 void Player::load_animations() {
@@ -64,23 +44,76 @@ void Player::load_animations() {
         walkingTextures1.push_back(tex1);
         walkingTextures2.push_back(tex2);
     }
+
+    for (int i = 1; i <= 9; ++i) {
+        sf::Texture tex1, tex2;
+        tex1.loadFromFile("assets/Texture/sword-swing1/animation-sword-swing1." + std::to_string(i) + ".png");
+        tex2.loadFromFile("assets/Texture/sword-swing2/animation-sword-swing1." + std::to_string(i) + ".png");
+        attackTextures1.push_back(tex1);
+        attackTextures2.push_back(tex2);
+    }
+}
+
+void Player::setupAnimations() {
+    if (joystickId != 0) {
+        for (sf::Texture& tex : walkingTextures1) {
+            walkingRefs.push_back(&tex);
+        }
+    }
+    else {
+        for (sf::Texture& tex : walkingTextures2) {
+            walkingRefs.push_back(&tex);
+        }
+    }
+    walkingAnimation = new Animation_Player(&sp, walkingRefs, 0.2f);
+
+    if (joystickId == 0) {
+        for (sf::Texture& tex : attackTextures2) attackRefs.push_back(&tex);
+    }
+    else {
+        for (sf::Texture& tex : attackTextures1) attackRefs.push_back(&tex);
+    }
+    attackAnimation = new Animation_Player(&sp, attackRefs, 0.07f);
+
+    if (joystickId != 0) {
+        for (sf::Texture& tex : swordPullingTextures1) {
+            swordRefs.push_back(&tex);
+        }
+    }
+    else {
+        for (sf::Texture& tex : swordPullingTextures2) {
+            swordRefs.push_back(&tex);
+        }
+    }
+    swordPullingAnimation = new Animation_Player(&sp, swordRefs, 0.2f);
 }
 
 void Player::update(sf::Time deltaTime) {
+    if (!is_alive) return;
+
     move(deltaTime);
 
-    if (is_walking) {
+    if (attackAnimation->isPlaying()) {
+        attackAnimation->update();
+        if (attackAnimation->isFinished()) {
+            attackAnimation->stop();
+            sp.setTexture(tx);
+        }
+    }
+    else if (is_walking) {
         if (!walkingAnimation->isPlaying()) {
             walkingAnimation->play(true);
         }
+        walkingAnimation->update();
     }
     else {
         walkingAnimation->stop();
         sp.setTexture(tx);
     }
 
-    walkingAnimation->update();
-    swordPullingAnimation->update();
+    if (swordPullingAnimation->isPlaying()) {
+        swordPullingAnimation->update();
+    }
 }
 
 sf::Vector2f Player::get_Position() {
@@ -112,35 +145,56 @@ void Player::move(sf::Time deltaTime) {
         if (axisX > 15) {
             movementX = this->speed * dt;
             sp.setScale(0.8, 0.8);
+            facing_right = true;
         }
         else if (axisX < -15) {
             movementX = this->speed * -dt;
             sp.setScale(-0.8, 0.8);
+            facing_right = false;
         }
     }
     else if (joystickId == 0) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && (sp.getPosition().x + 20) < 960) {
             movementX = this->speed * dt;
             sp.setScale(0.8, 0.8);
+            facing_right = true;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sp.getPosition().x > 0) {
             movementX = this->speed * -dt;
             sp.setScale(-0.8, 0.8);
+            facing_right = false;
         }
     }
     else {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::K) && (sp.getPosition().x + 20) < 960) {
             movementX = this->speed * dt;
             sp.setScale(0.8, 0.8);
+            facing_right = true;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::H) && sp.getPosition().x > 0) {
             movementX = this->speed * -dt;
             sp.setScale(-0.8, 0.8);
+            facing_right = false;
         }
     }
 
     is_walking = (movementX != 0);
     sp.move(movementX, 0);
+}
+
+
+void Player::attack() {
+    if (is_alive) {
+        attackAnimation->play(false);
+    }
+}
+
+void Player::die() {
+    if(is_alive){
+    std::cout << "tot: " << joystickId;
+    is_alive = false;
+    }
+    //TODO: Sterben
 }
 
 void Player::setPosition(int x, int y) {
@@ -154,4 +208,5 @@ void Player::render(sf::RenderWindow* target) {
 Player::~Player() {
     delete walkingAnimation;
     delete swordPullingAnimation;
+    delete attackAnimation;
 }

@@ -15,7 +15,9 @@ void Animation_Player::update() {
 }
 
 void Animation_Player::play(bool should_loop) {
-    if (animation_textures.empty()) return;
+    if (animation_textures.empty()) {
+        return;
+    }
     is_playing = true;
     loop = should_loop;
     clock.restart();
@@ -24,9 +26,6 @@ void Animation_Player::play(bool should_loop) {
 void Animation_Player::stop() {
     is_playing = false;
     current_frame = 0;
-    if (!animation_textures.empty()) {
-        sp->setTexture(*animation_textures[0]);
-    }
 }
 
 void Animation_Player::pause() {
@@ -39,4 +38,8 @@ bool Animation_Player::isPlaying() {
 
 void Animation_Player::setFrameDuration(float duration) {
     frame_duration = duration;
+}
+
+bool Animation_Player::isFinished() {
+    return !is_playing && !loop && current_frame == animation_textures.size() - 1;
 }

@@ -17,6 +17,8 @@ public:
         : sp(sp), animation_textures(tx), frame_duration(frame_duration), current_frame(0), is_playing(false), loop(false) {
     }
 
+    bool isFinished();
+
     void update();
     void play(bool should_loop);
     void stop();

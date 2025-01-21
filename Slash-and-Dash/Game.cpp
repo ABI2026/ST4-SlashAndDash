@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "Player.h"
+
 
 Game::Game() {
 	viewWidth = 960;
@@ -95,6 +95,15 @@ void Game::updatePlayer(sf::Time deltaTime) {
 	float directionDot = movement1.x * movement2.x + movement1.y * movement2.y;
 
 	world->update(directionDot > 0 ? movement.x : 0);
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+		player->attack();
+	}
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+		player2->attack();
+	}
+
+	//angriff verarbeiten
 }
 
 void Game::update(sf::Time deltaTime) {
@@ -111,8 +120,6 @@ void Game::updateMenu() {
 		case Menu::MainMenu:
 			if (selectedOption == 0) {
 				state = State::Playing;
-				player->start_animation(0);
-				player2->start_animation(0);
 			}
 			if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
 			else if (selectedOption == 2) window->close();
