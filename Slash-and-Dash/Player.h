@@ -7,10 +7,12 @@ class Player {
 private:
     unsigned int joystickId;
     float speed;
-    float attack_range;
 
     sf::Sprite sp;
     sf::Texture tx;
+
+    sf::RectangleShape hitbox;
+    sf::RectangleShape attack_range;
 
     // Texturen als Vektoren
     std::vector<sf::Texture> swordPullingTextures1, swordPullingTextures2;
@@ -39,6 +41,13 @@ public:
     bool facing_right;
 
     void attack();
+
+    sf::FloatRect get_attackBounds() {
+        return attack_range.getGlobalBounds();
+    }
+    sf::FloatRect get_globalBounds() {
+        return hitbox.getGlobalBounds();
+    }
 
     void update(sf::Time deltaTime);
     sf::Vector2f get_Position();
