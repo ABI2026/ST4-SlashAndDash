@@ -19,11 +19,16 @@ Player::Player(unsigned int joystickId) {
         facing_right = false;
     }
 
-    hitbox.setSize(sf::Vector2f(150,300));
-    hitbox.setSize(sf::Vector2f(hitbox.getSize().x - 20.f, hitbox.getSize().y));
+    if (joystickId != 0) {
+        hitbox.setSize(sf::Vector2f(-150, 300));
 
-    attack_range.setSize(sf::Vector2f(100, 350));
-    attack_range.setSize(sf::Vector2f(attack_range.getSize().x - 20.f, attack_range.getSize().y));
+        attack_range.setSize(sf::Vector2f(-100, 302));
+    }
+    else {
+        hitbox.setSize(sf::Vector2f(150, 300));
+
+        attack_range.setSize(sf::Vector2f(100, 302));
+    }
 
     ///
     hitbox.setFillColor(sf::Color(255, 0, 0, 100));
@@ -108,7 +113,7 @@ void Player::update(sf::Time deltaTime) {
 
     move(deltaTime);
     hitbox.setPosition(sf::Vector2f(sp.getPosition().x, sp.getPosition().y));
-    attack_range.setPosition(sf::Vector2f(hitbox.getPosition().x, sp.getPosition().y));
+    attack_range.setPosition(sf::Vector2f(hitbox.getPosition().x + hitbox.getSize().x*.87, sp.getPosition().y));
 
     if (attackAnimation->isPlaying()) {
         attackAnimation->update();
@@ -163,11 +168,14 @@ void Player::move(sf::Time deltaTime) {
             movementX = this->speed * dt;
             sp.setScale(0.8, 0.8);
             hitbox.setSize(sf::Vector2f(150, 300));
+            attack_range.setSize(sf::Vector2f(100, 350));
+
             facing_right = true;
         }
         else if (axisX < -15) {
             movementX = this->speed * -dt;
             sp.setScale(-0.8, 0.8);
+            attack_range.setSize(sf::Vector2f(-100, 350));
             hitbox.setSize(sf::Vector2f(-150, 300));
             facing_right = false;
         }
@@ -177,11 +185,14 @@ void Player::move(sf::Time deltaTime) {
             movementX = this->speed * dt;
             sp.setScale(0.8, 0.8);
             hitbox.setSize(sf::Vector2f(150, 300));
+            attack_range.setSize(sf::Vector2f(100, 350));
+
             facing_right = true;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sp.getPosition().x > 0) {
             movementX = this->speed * -dt;
             sp.setScale(-0.8, 0.8);
+            attack_range.setSize(sf::Vector2f(-100, 350));
             hitbox.setSize(sf::Vector2f(-150, 300));
             facing_right = false;
         }
@@ -191,12 +202,14 @@ void Player::move(sf::Time deltaTime) {
             movementX = this->speed * dt;
             sp.setScale(0.8, 0.8);
             hitbox.setSize(sf::Vector2f(150, 300));
+            attack_range.setSize(sf::Vector2f(-100, 350));
             facing_right = true;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::H) && sp.getPosition().x > 0) {
             movementX = this->speed * -dt;
             sp.setScale(-0.8, 0.8);
             hitbox.setSize(sf::Vector2f(-150, 300));
+            attack_range.setSize(sf::Vector2f(-100, 350));
             facing_right = false;
         }
     }
