@@ -1,6 +1,7 @@
 #pragma once
 #include"SFML/Graphics.hpp"
 #include "Menu.h"
+#include "Player.h"
 #include "World.h"
 #include "SFML/Audio.hpp"
 
@@ -45,9 +46,7 @@ private:
 public:
 	Game();
 	virtual ~Game();
-
 	void run();
-
 	void render();
 
 	sf::Event getEvent();

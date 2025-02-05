@@ -3,23 +3,49 @@
 Menu::Menu(float width, float height) : currentIndex(0), currentState(MainMenu) {
     if (!font.loadFromFile("Assets/Fonts/Roboto-Regular.ttf")) {
     }
+    bg.loadFromFile("Assets/Texture/menu/menu-background.png");
+    bg_shape.setTexture(&bg);
+    bg_shape.setSize((sf::Vector2f)bg.getSize()*5.f);
+    mainMenuTextures[0].loadFromFile("assets/Texture/menu/menu-play-hover.png");
+    mainMenuTextures[1].loadFromFile("assets/Texture/menu/menu-options-hover.png");
+    mainMenuTextures[2].loadFromFile("assets/Texture/menu/menu-exit-hover.png");
+    button_hover.setTexture(&mainMenuTextures[0]);
+    button_hover.setSize((sf::Vector2f)button_hover.getTexture()->getSize()*2.f);
     setState(MainMenu, { static_cast<unsigned int>(width), static_cast<unsigned int>(height) });
+
+    button_hover.setOrigin(button_hover.getSize() / 2.f);
 }
 
 void Menu::moveUp() {
-    updateOptionColor(currentIndex, sf::Color::White);
-    currentIndex = (currentIndex - 1 + menuOptions.size()) % menuOptions.size();
-    updateOptionColor(currentIndex, sf::Color::Red);
+    if (currentState == MenuState::MainMenu) {
+        currentIndex = (currentIndex - 1 + menuOptions.size()) % menuOptions.size();
+        button_hover.setTexture(&mainMenuTextures[currentIndex]);
+    }else{
+        updateOptionColor(currentIndex, sf::Color::White);
+        currentIndex = (currentIndex - 1 + menuOptions.size()) % menuOptions.size();
+        updateOptionColor(currentIndex, sf::Color::Red);
+    }
 }
 
 void Menu::moveDown() {
-    updateOptionColor(currentIndex, sf::Color::White);
-    currentIndex = (currentIndex + 1) % menuOptions.size();
-    updateOptionColor(currentIndex, sf::Color::Red);
+    if (currentState == MenuState::MainMenu) {
+        currentIndex = (currentIndex + 1) % menuOptions.size();
+        button_hover.setTexture(&mainMenuTextures[currentIndex]);
+    }
+    else {
+        updateOptionColor(currentIndex, sf::Color::White);
+        currentIndex = (currentIndex + 1) % menuOptions.size();
+        updateOptionColor(currentIndex, sf::Color::Red);
+    }
 }
 
 int Menu::getSelectedOption() const {
     return currentIndex;
+}
+
+void Menu::resetCurrentIndex() {
+    currentIndex = 0;
+    button_hover.setTexture(&mainMenuTextures[0]);
 }
 
 void Menu::updateOptionColor(int index, const sf::Color& color) {
@@ -27,8 +53,15 @@ void Menu::updateOptionColor(int index, const sf::Color& color) {
 }
 
 void Menu::render(sf::RenderTarget* target) {
-    for (const auto& option : menuOptions) {
-        target->draw(option);
+    button_hover.setPosition(sf::Vector2f(target->getSize().x / 2, target->getSize().y / 2));
+    target->setView(target->getDefaultView());
+    target->draw(bg_shape);
+    if (currentState == MenuState::MainMenu) {
+        target->draw(button_hover);
+    }else{
+        for (const auto& option : menuOptions) {
+            target->draw(option);
+        }
     }
 }
 
@@ -104,6 +137,7 @@ void Menu::loadMenuOptions(const std::vector<std::string>& options, int cs, sf::
 
 void Menu::loadMainMenu(int cs, sf::Vector2u ws) {
     std::vector<std::string> options = { "Play", "Settings", "Quit" };
+
     loadMenuOptions(options, cs, ws);
 }
 

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation_Player.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation_Player.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Menu.h" />

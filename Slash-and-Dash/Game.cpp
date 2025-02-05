@@ -1,16 +1,10 @@
 #include "Game.h"
-#include "Player.h"
+
 
 Game::Game() {
 	viewWidth = 960;
 	viewHeight = 540;
 	init();
-}
-
-Game::~Game() {
-	delete this->window;
-	delete this->player;
-	delete this->world;
 }
 
 void Game::run() {
@@ -83,15 +77,15 @@ void Game::updateView() {
 }
 
 void Game::updatePlayer(sf::Time deltaTime) {
-	sf::Vector2f prevPos1 = player->getPosition();
-	sf::Vector2f prevPos2 = player2->getPosition();
+	sf::Vector2f prevPos1 = player->get_Position();
+	sf::Vector2f prevPos2 = player2->get_Position();
 	sf::Vector2f prevAveragePosition = (prevPos1 + prevPos2) * 0.5f;
 
 	player->update(deltaTime);
 	player2->update(deltaTime);
 
-	sf::Vector2f currentPos1 = player->getPosition();
-	sf::Vector2f currentPos2 = player2->getPosition();
+	sf::Vector2f currentPos1 = player->get_Position();
+	sf::Vector2f currentPos2 = player2->get_Position();
 	sf::Vector2f currentAveragePosition = (currentPos1 + currentPos2) * 0.5f;
 
 	sf::Vector2f movement = currentAveragePosition - prevAveragePosition;
@@ -101,6 +95,21 @@ void Game::updatePlayer(sf::Time deltaTime) {
 	float directionDot = movement1.x * movement2.x + movement1.y * movement2.y;
 
 	world->update(directionDot > 0 ? movement.x : 0);
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+		player->attack();
+		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
+			player2->die();
+		}
+	}
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+		player2->attack();
+		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
+			player->die();
+		}
+	}
+
+	//angriff verarbeiten
 }
 
 void Game::update(sf::Time deltaTime) {
@@ -117,8 +126,6 @@ void Game::updateMenu() {
 		case Menu::MainMenu:
 			if (selectedOption == 0) {
 				state = State::Playing;
-				player->start_animation(0);
-				player2->start_animation(1);
 			}
 			if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
 			else if (selectedOption == 2) window->close();
@@ -179,6 +186,7 @@ void Game::updatePollEvents() {
 				state = State::inGameMenu;
 			}
 			else if (state == State::inGameMenu) {
+				menu->resetCurrentIndex();
 				state = State::Playing;
 			}
 		}
@@ -198,7 +206,6 @@ void Game::render() {
 		player2->render(this->window);
 	}
 	else if (state == State::inGameMenu || state == State::inMainMenu) {
-		window->setView(this->window->getDefaultView());
 		menu->render(this->window);
 	}
 
@@ -207,4 +214,10 @@ void Game::render() {
 
 sf::Event Game::getEvent() {
 	return e;
+}
+
+Game::~Game() {
+	delete this->window;
+	delete this->player;
+	delete this->world;
 }

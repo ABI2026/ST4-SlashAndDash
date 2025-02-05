@@ -1,44 +1,58 @@
 #pragma once
+#include "Animation_Player.h"
 #include "SFML/Graphics.hpp"
+#include <vector>
 
 class Player {
+private:
+    unsigned int joystickId;
+    float speed;
 
-	sf::Texture tx;
-	sf::Sprite sp;
-	sf::Clock clock;
+    sf::Sprite sp;
+    sf::Texture tx;
 
-	sf::Texture texture1, texture2, texture3, texture4;
+    sf::RectangleShape hitbox;
+    sf::RectangleShape attack_range;
 
-	int current_frame = 0;
-	int curr_a_i;
-	float frame_duration = 0.25;
-	bool is_animating = false;
-	bool is_walking = false;
+    // Texturen als Vektoren
+    std::vector<sf::Texture> swordPullingTextures1, swordPullingTextures2;
+    std::vector<sf::Texture> walkingTextures1, walkingTextures2;
+    std::vector<sf::Texture> attackTextures1, attackTextures2;
 
-	std::vector<sf::Texture> swordPullingTextures1;
-	std::vector<sf::Texture> swordPullingTextures2;
+    // Referenzen auf die Texturen
+    std::vector<sf::Texture*> walkingRefs;
+    std::vector<sf::Texture*> swordRefs;
+    std::vector<sf::Texture*> attackRefs;
+    Animation_Player* walkingAnimation;
+    Animation_Player* swordPullingAnimation;
+    Animation_Player* attackAnimation;
+    bool is_walking;
+    bool is_alive;
 
-	std::vector<sf::Texture> walkingTextures1;
-	std::vector<sf::Texture> walkingTextures2;
+    void load_animations();
+    void move(sf::Time deltaTime);
+    void setupAnimations();
 
-	void play_animation();
-
-	unsigned int joystickId;
-
-	float speed;
 public:
-	Player(unsigned int joystickId);
-	~Player();
+    Player(unsigned int joystickId);
+    ~Player();
 
-	void update(sf::Time deltaTime);
-	void move(sf::Time deltaTime);
-	void start_animation(int);
-	void load_animations();
-	void render(sf::RenderWindow* target);
+    bool is_attacking;
+    bool facing_right;
 
-	void setPosition(int a, int b);
+    void attack();
 
-	sf::Vector2f getPosition() const {
-		return sp.getPosition();
-	}
+    sf::FloatRect get_attackBounds() {
+        return attack_range.getGlobalBounds();
+    }
+    sf::FloatRect get_globalBounds() {
+        return hitbox.getGlobalBounds();
+    }
+
+    void update(sf::Time deltaTime);
+    sf::Vector2f get_Position();
+    void start_animation(int index);
+    void die();
+    void setPosition(int x, int y);
+    void render(sf::RenderWindow* target);
 };
