@@ -96,20 +96,19 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	world->update(directionDot > 0 ? movement.x : 0);
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
 		player->attack();
 		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
 			player2->die();
 		}
 	}
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
 		player2->attack();
 		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
 			player->die();
 		}
 	}
-
-	//angriff verarbeiten
 }
 
 void Game::update(sf::Time deltaTime) {
