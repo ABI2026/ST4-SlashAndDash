@@ -246,9 +246,8 @@ void Player::setPosition(int x, int y) {
 void Player::render(sf::RenderWindow* target) {
     target->draw(sp);
 
-    // Consider making debug visualization optional
-    target->draw(hitbox);
-    target->draw(attack_range);
+    //target->draw(hitbox);
+    //target->draw(attack_range);
 }
 
 Player::~Player() {
