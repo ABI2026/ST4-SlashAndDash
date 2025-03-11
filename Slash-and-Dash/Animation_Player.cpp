@@ -25,7 +25,7 @@ void Animation_Player::play(bool should_loop) {
 
 void Animation_Player::stop() {
     is_playing = false;
-    current_frame = 0;
+    //current_frame = 0;
 }
 
 void Animation_Player::pause() {
@@ -41,5 +41,5 @@ void Animation_Player::setFrameDuration(float duration) {
 }
 
 bool Animation_Player::isFinished() {
-    return !is_playing && !loop;
+    return !is_playing && current_frame == animation_textures.size() - 1;
 }

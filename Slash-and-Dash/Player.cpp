@@ -64,6 +64,9 @@ void Player::load_animations() {
 
     loadTextureSet(attackTextures1, "assets/Texture/sword-swing1/animation-sword-swing1.", 1, 9, ".png");
     loadTextureSet(attackTextures2, "assets/Texture/sword-swing2/animation-sword-swing1.", 1, 9, ".png");
+
+    loadTextureSet(dyingTextures1, "assets/Texture/dying1/dying1.", 1, 6, ".png");
+    loadTextureSet(dyingTextures2, "assets/Texture/dying2/dying2.", 1, 6, ".png");
 }
 
 void Player::loadTextureSet(std::vector<sf::Texture>& textureVec, const std::string& basePath,
@@ -83,11 +86,13 @@ void Player::setupAnimations() {
     setupAnimationRefs(walkingRefs, joystickId == 0 ? walkingTextures2 : walkingTextures1);
     setupAnimationRefs(attackRefs, joystickId == 0 ? attackTextures2 : attackTextures1);
     setupAnimationRefs(swordRefs, joystickId == 0 ? swordPullingTextures2 : swordPullingTextures1);
+    setupAnimationRefs(dyingRefs, joystickId == 0 ? dyingTextures2 : dyingTextures1);
 
     // Create animation controllers
     walkingAnimation = new Animation_Player(&sp, walkingRefs, 0.2f);
     attackAnimation = new Animation_Player(&sp, attackRefs, 0.07f);
     swordPullingAnimation = new Animation_Player(&sp, swordRefs, 0.2f);
+    dyingAnimation = new Animation_Player(&sp, dyingRefs, 0.2f);
 }
 
 void Player::setupAnimationRefs(std::vector<sf::Texture*>& refs, std::vector<sf::Texture>& textures) {
@@ -98,7 +103,9 @@ void Player::setupAnimationRefs(std::vector<sf::Texture*>& refs, std::vector<sf:
 }
 
 void Player::update(sf::Time deltaTime) {
-    if (!is_alive) return;
+    if (!is_alive) {
+        updateAnimations();
+    }
 
     move(deltaTime);
     updateColliders();
@@ -114,26 +121,33 @@ void Player::updateColliders() {
 }
 
 void Player::updateAnimations() {
-    if (is_attacking) {
-        attackAnimation->update();
-        if (attackAnimation->isFinished()) {
+    if (is_alive) {
+        if (is_attacking) {
+            attackAnimation->update();
+            if (attackAnimation->isFinished()) {
+                sp.setTexture(tx);
+                is_attacking = false;
+            }
+        }
+        else if (is_walking) {
+            if (!walkingAnimation->isPlaying()) {
+                walkingAnimation->play(true);
+            }
+            walkingAnimation->update();
+        }
+        else {
+            walkingAnimation->stop();
             sp.setTexture(tx);
-            is_attacking = false;
         }
-    }
-    else if (is_walking) {
-        if (!walkingAnimation->isPlaying()) {
-            walkingAnimation->play(true);
+
+        if (swordPullingAnimation->isPlaying()) {
+            swordPullingAnimation->update();
         }
-        walkingAnimation->update();
+
     }
     else {
-        walkingAnimation->stop();
-        sp.setTexture(tx);
-    }
-
-    if (swordPullingAnimation->isPlaying()) {
-        swordPullingAnimation->update();
+        if (dyingAnimation->isFinished()) sp.setColor(sf::Color(255, 255, 255, 0));
+        if (dyingAnimation->isPlaying()) dyingAnimation->update();
     }
 }
 
@@ -150,6 +164,9 @@ void Player::start_animation(int index) {
         break;
     case 2:
         walkingAnimation->play(true);
+        break;
+    case 3:
+        dyingAnimation->play(false);
         break;
     default:
         break;
@@ -234,7 +251,7 @@ void Player::die() {
     if (is_alive) {
         std::cout << "Player " << joystickId << " died!" << std::endl;
         is_alive = false;
-        // TODO: Add death animation
+        start_animation(3);
     }
 }
 

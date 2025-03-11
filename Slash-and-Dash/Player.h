@@ -22,16 +22,19 @@ private:
     std::vector<sf::Texture> swordPullingTextures1, swordPullingTextures2;
     std::vector<sf::Texture> walkingTextures1, walkingTextures2;
     std::vector<sf::Texture> attackTextures1, attackTextures2;
+    std::vector<sf::Texture> dyingTextures1, dyingTextures2;
 
     // Animation references
     std::vector<sf::Texture*> walkingRefs;
     std::vector<sf::Texture*> swordRefs;
     std::vector<sf::Texture*> attackRefs;
+    std::vector<sf::Texture*> dyingRefs;
 
     // Animation controllers
     Animation_Player* walkingAnimation;
     Animation_Player* swordPullingAnimation;
     Animation_Player* attackAnimation;
+    Animation_Player* dyingAnimation;
 
     // Initialization methods
     void initializeTextures();
