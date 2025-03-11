@@ -114,10 +114,9 @@ void Player::updateColliders() {
 }
 
 void Player::updateAnimations() {
-    if (attackAnimation->isPlaying()) {
+    if (is_attacking) {
         attackAnimation->update();
         if (attackAnimation->isFinished()) {
-            attackAnimation->stop();
             sp.setTexture(tx);
             is_attacking = false;
         }

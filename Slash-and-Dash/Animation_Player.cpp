@@ -41,5 +41,5 @@ void Animation_Player::setFrameDuration(float duration) {
 }
 
 bool Animation_Player::isFinished() {
-    return !is_playing && !loop && current_frame == animation_textures.size() - 1;
+    return !is_playing && !loop;
 }
