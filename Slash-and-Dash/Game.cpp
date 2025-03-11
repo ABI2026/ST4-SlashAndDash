@@ -42,6 +42,10 @@ void Game::initVars() {
 	mBg.setVolume(10);
 	mBg.play();
 	mBg.setLoop(true);
+
+	die_buffer.loadFromFile("assets/Sounds/dying.wav");
+	die.setBuffer(die_buffer);
+	die.setLoop(false);
 }
 
 void Game::initPlayer() {
@@ -100,6 +104,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 		player->attack();
 		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
 			player2->die();
+			die.play();
 		}
 	}
 
@@ -107,6 +112,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 		player2->attack();
 		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
 			player->die();
+			die.play();
 		}
 	}
 }

@@ -15,6 +15,9 @@ private:
 
 	sf::Music mBg;
 
+	sf::SoundBuffer die_buffer;
+	sf::Sound die;
+
 	enum State {
 		inMainMenu,
 		inGameMenu,
