@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "World.h"
 #include "SFML/Audio.hpp"
+#include "Endscreen.h"
 
 class Player;
 
@@ -34,17 +35,21 @@ private:
 	World* world;
 	Player* player;
 	Player* player2;
+	Endscreen* endscreen;
 
 	void init();
 	void initWinow();
 	void initVars();
 	void initPlayer();
+	void initEndscreen();
 
 	void update(sf::Time deltaTime);
 	void updateMenu();
 	void updateView();
 	void updatePlayer(sf::Time deltaTime);
 	void updatePollEvents();
+
+	bool alive;
 
 public:
 	Game();

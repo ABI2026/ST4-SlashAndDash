@@ -21,6 +21,7 @@ void Game::init() {
 	initWinow();
 	initVars();
 	initPlayer();
+	initEndscreen();
 }
 
 void Game::initWinow() {
@@ -37,6 +38,7 @@ void Game::initVars() {
 	fullscreen = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
 	world = new World;
+	alive = true;
 
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
 	mBg.setVolume(10);
@@ -52,6 +54,11 @@ void Game::initPlayer() {
 	this->player = new Player(0);
 	this->player2 = new Player(1);
 	this->player2->setPosition(900, 140);
+}
+
+void Game::initEndscreen()
+{
+	this->endscreen = new Endscreen();
 }
 
 void Game::updateView() {
@@ -105,6 +112,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
 			player2->die();
 			die.play();
+			alive = false;
 		}
 	}
 
@@ -113,6 +121,8 @@ void Game::updatePlayer(sf::Time deltaTime) {
 		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
 			player->die();
 			die.play();
+			alive = false;
+			//initEndscreen(); //maybe funktionert nicht
 		}
 	}
 }
@@ -212,6 +222,11 @@ void Game::render() {
 	}
 	else if (state == State::inGameMenu || state == State::inMainMenu) {
 		menu->render(this->window);
+	}
+
+	if (!alive) {
+		endscreen->render(this->window);
+		//alive = true;
 	}
 
 	window->display();

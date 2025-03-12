@@ -8,6 +8,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Animation_Player.cpp" />
+    <ClCompile Include="Endscreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -16,5 +17,6 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="Animation_Player.h" />
+    <ClInclude Include="Endscreen.h" />
   </ItemGroup>
 </Project>
