@@ -22,6 +22,7 @@ void Game::init() {
 	initVars();
 	initPlayer();
 	initEndscreen();
+	initWorld();
 }
 
 void Game::initWinow() {
@@ -37,7 +38,6 @@ void Game::initVars() {
 	state = State::inMainMenu;
 	fullscreen = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
-	world = new World;
 	alive = true;
 
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
@@ -50,6 +50,8 @@ void Game::initVars() {
 	die.setLoop(false);
 
 	showEndscreen = false;
+
+	
 }
 
 void Game::initPlayer() {
@@ -61,6 +63,10 @@ void Game::initPlayer() {
 void Game::initEndscreen()
 {
 	this->endscreen = new Endscreen();
+}
+
+void Game::initWorld() {
+	world = new World;
 }
 
 void Game::updateView() {
@@ -115,6 +121,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 			player2->die();
 			die.play();
 			alive = false;
+			wins[0] += 1;
 		}
 	}
 
@@ -124,12 +131,13 @@ void Game::updatePlayer(sf::Time deltaTime) {
 			player->die();
 			die.play();
 			alive = false;
-			//initEndscreen(); //maybe funktionert nicht
+			wins[1] += 1;
 		}
 	}
 
 	if (!alive && (player->isDyingAnimationFinished() || player2->isDyingAnimationFinished())) {
-		showEndscreen = true;
+		start_round();
+		//showEndscreen = true;
 	}
 }
 
@@ -218,6 +226,11 @@ void Game::updatePollEvents() {
 	}
 }
 
+void Game::start_round() {
+	initPlayer();
+	initWorld();
+}
+
 void Game::render() {
 	window->clear();
 	window->setView(gameView);
@@ -235,6 +248,10 @@ void Game::render() {
 	}
 
 	window->display();
+}
+
+sf::Event Game::getEvent() {
+	return sf::Event();
 }
 
 Game::~Game() {

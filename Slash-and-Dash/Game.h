@@ -42,6 +42,7 @@ private:
 	void initVars();
 	void initPlayer();
 	void initEndscreen();
+	void initWorld();
 
 	void update(sf::Time deltaTime);
 	void updateMenu();
@@ -49,8 +50,12 @@ private:
 	void updatePlayer(sf::Time deltaTime);
 	void updatePollEvents();
 
+	void start_round();
+
 	bool alive;
 	bool showEndscreen;
+
+	int wins[2] = {};
 
 public:
 	Game();
