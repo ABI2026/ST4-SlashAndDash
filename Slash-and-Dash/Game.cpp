@@ -42,12 +42,16 @@ void Game::initVars() {
 	mBg.setVolume(10);
 	mBg.play();
 	mBg.setLoop(true);
+
+	die_buffer.loadFromFile("assets/Sounds/dying.wav");
+	die.setBuffer(die_buffer);
+	die.setLoop(false);
 }
 
 void Game::initPlayer() {
 	this->player = new Player(0);
 	this->player2 = new Player(1);
-	this->player2->setPosition(520, 140);
+	this->player2->setPosition(900, 140);
 }
 
 void Game::updateView() {
@@ -96,20 +100,21 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	world->update(directionDot > 0 ? movement.x : 0);
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
 		player->attack();
 		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
 			player2->die();
-		}
-	}
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-		player2->attack();
-		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
-			player->die();
+			die.play();
 		}
 	}
 
-	//angriff verarbeiten
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
+		player2->attack();
+		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
+			player->die();
+			die.play();
+		}
+	}
 }
 
 void Game::update(sf::Time deltaTime) {
@@ -210,10 +215,6 @@ void Game::render() {
 	}
 
 	window->display();
-}
-
-sf::Event Game::getEvent() {
-	return e;
 }
 
 Game::~Game() {
