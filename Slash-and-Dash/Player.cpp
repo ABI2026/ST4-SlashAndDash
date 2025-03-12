@@ -146,7 +146,7 @@ void Player::updateAnimations() {
 
     }
     else {
-        if (dyingAnimation->isFinished()) sp.setColor(sf::Color(255, 255, 255, 0));
+        if (dyingAnimation->isFinished()) sp.setPosition(sf::Vector2f(10000,10000));
         if (dyingAnimation->isPlaying()) dyingAnimation->update();
     }
 }

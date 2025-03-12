@@ -51,7 +51,7 @@ void Game::initVars() {
 void Game::initPlayer() {
 	this->player = new Player(0);
 	this->player2 = new Player(1);
-	this->player2->setPosition(520, 140);
+	this->player2->setPosition(900, 140);
 }
 
 void Game::updateView() {
@@ -215,10 +215,6 @@ void Game::render() {
 	}
 
 	window->display();
-}
-
-sf::Event Game::getEvent() {
-	return e;
 }
 
 Game::~Game() {
