@@ -65,8 +65,8 @@ void Player::load_animations() {
     loadTextureSet(attackTextures1, "assets/Texture/sword-swing1/animation-sword-swing1.", 1, 9, ".png");
     loadTextureSet(attackTextures2, "assets/Texture/sword-swing2/animation-sword-swing1.", 1, 9, ".png");
 
-    loadTextureSet(dyingTextures1, "assets/Texture/dying1/dying1.", 1, 6, ".png");
-    loadTextureSet(dyingTextures2, "assets/Texture/dying2/dying2.", 1, 6, ".png");
+    loadTextureSet(dyingTextures1, "assets/Texture/dying1/dying1.", 1, 8, ".png");
+    loadTextureSet(dyingTextures2, "assets/Texture/dying2/dying2.", 1, 8, ".png");
 }
 
 void Player::loadTextureSet(std::vector<sf::Texture>& textureVec, const std::string& basePath,

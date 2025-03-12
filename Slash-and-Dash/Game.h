@@ -50,6 +50,7 @@ private:
 	void updatePollEvents();
 
 	bool alive;
+	bool showEndscreen;
 
 public:
 	Game();

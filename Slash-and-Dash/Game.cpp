@@ -48,6 +48,8 @@ void Game::initVars() {
 	die_buffer.loadFromFile("assets/Sounds/dying.wav");
 	die.setBuffer(die_buffer);
 	die.setLoop(false);
+
+	showEndscreen = false;
 }
 
 void Game::initPlayer() {
@@ -124,6 +126,10 @@ void Game::updatePlayer(sf::Time deltaTime) {
 			alive = false;
 			//initEndscreen(); //maybe funktionert nicht
 		}
+	}
+
+	if (!alive && (player->isDyingAnimationFinished() || player2->isDyingAnimationFinished())) {
+		showEndscreen = true;
 	}
 }
 
@@ -219,14 +225,13 @@ void Game::render() {
 		world->render(this->window);
 		player->render(this->window);
 		player2->render(this->window);
+
+		if (showEndscreen) {
+			endscreen->render(this->window);
+		}
 	}
 	else if (state == State::inGameMenu || state == State::inMainMenu) {
 		menu->render(this->window);
-	}
-
-	if (!alive) {
-		endscreen->render(this->window);
-		//alive = true;
 	}
 
 	window->display();
