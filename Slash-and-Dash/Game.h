@@ -56,6 +56,7 @@ private:
 	bool showEndscreen;
 
 	int wins[2] = {};
+	bool pointsUpdated = false;
 
 public:
 	Game();

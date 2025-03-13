@@ -50,8 +50,6 @@ void Game::initVars() {
 	die.setLoop(false);
 
 	showEndscreen = false;
-
-	
 }
 
 void Game::initPlayer() {
@@ -117,26 +115,29 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
 		player->attack();
-		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
+		if (player->get_attackBounds().intersects(player2->get_globalBounds()) && !pointsUpdated) {
 			player2->die();
 			die.play();
 			alive = false;
 			wins[0] += 1;
+			pointsUpdated = true;
 		}
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
 		player2->attack();
-		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
+		if (player2->get_attackBounds().intersects(player->get_globalBounds()) && !pointsUpdated) {
 			player->die();
 			die.play();
 			alive = false;
 			wins[1] += 1;
+			pointsUpdated = true;
 		}
 	}
 
 	if (!alive && (player->isDyingAnimationFinished() || player2->isDyingAnimationFinished())) {
 		start_round();
+		std::cout << "Spieler 1: " << wins[0] << "\n Spieler 2: " << wins[1] << std::endl;
 		//showEndscreen = true;
 	}
 }
@@ -229,6 +230,7 @@ void Game::updatePollEvents() {
 void Game::start_round() {
 	initPlayer();
 	initWorld();
+	pointsUpdated = false;
 }
 
 void Game::render() {
