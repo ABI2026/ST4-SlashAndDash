@@ -68,6 +68,7 @@ public:
     void start_animation(int index);
     void setPosition(int x, int y);
     void render(sf::RenderWindow* target);
+    bool is_dying_animation_finished();
 
     // Getters
     sf::Vector2f get_Position();

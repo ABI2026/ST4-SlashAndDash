@@ -39,6 +39,7 @@ void Game::initVars() {
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
 	world = new World;
 	alive = true;
+	countPoints = true;
 
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
 	mBg.setVolume(10);
@@ -113,7 +114,16 @@ void Game::updatePlayer(sf::Time deltaTime) {
 			player2->die();
 			die.play();
 			alive = false;
+			if (countPoints) {
+				points[0] += 1;
+				cout << "Player 1: " << points[0] << endl;
+				countPoints = false;
+			}
+			endscreen->endscreen_start(1.4, 4);
 		}
+	}else if (player2->is_dying_animation_finished()) {
+		start_Round();
+		countPoints = true;
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
@@ -122,8 +132,17 @@ void Game::updatePlayer(sf::Time deltaTime) {
 			player->die();
 			die.play();
 			alive = false;
-			//initEndscreen(); //maybe funktionert nicht
+			if (countPoints) {
+				points[1]++;
+				cout << "Player 2:" << points[1] << endl;
+				countPoints = false;
+			}
+			endscreen->endscreen_start(1.4, 4);
 		}
+	}
+	else if (player->is_dying_animation_finished()) {
+		start_Round();
+		countPoints = true;
 	}
 }
 
@@ -131,6 +150,7 @@ void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
 	updatePlayer(deltaTime);
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
+	if (!alive) endscreen->update();
 }
 
 void Game::updateMenu() {
@@ -212,6 +232,12 @@ void Game::updatePollEvents() {
 	}
 }
 
+void Game::start_Round()
+{
+	initPlayer();
+	//initWorld();
+}
+
 void Game::render() {
 	window->clear();
 	window->setView(gameView);
@@ -226,7 +252,6 @@ void Game::render() {
 
 	if (!alive) {
 		endscreen->render(this->window);
-		//alive = true;
 	}
 
 	window->display();

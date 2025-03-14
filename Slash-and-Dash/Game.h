@@ -36,6 +36,7 @@ private:
 	Player* player;
 	Player* player2;
 	Endscreen* endscreen;
+	int points[2] = {};
 
 	void init();
 	void initWinow();
@@ -50,8 +51,12 @@ private:
 	void updatePollEvents();
 
 	bool alive;
+	bool countPoints;
+	//sf::Clock endscreenTime;
 
 public:
+	void start_Round();
+
 	Game();
 	virtual ~Game();
 	void run();
