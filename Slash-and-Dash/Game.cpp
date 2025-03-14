@@ -22,7 +22,6 @@ void Game::init() {
 	initVars();
 	initPlayer();
 	initEndscreen();
-	initWorld();
 }
 
 void Game::initWinow() {
@@ -38,6 +37,7 @@ void Game::initVars() {
 	state = State::inMainMenu;
 	fullscreen = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
+	world = new World;
 	alive = true;
 	countPoints = true;
 
@@ -49,8 +49,6 @@ void Game::initVars() {
 	die_buffer.loadFromFile("assets/Sounds/dying.wav");
 	die.setBuffer(die_buffer);
 	die.setLoop(false);
-
-	showEndscreen = false;
 }
 
 void Game::initPlayer() {
@@ -59,13 +57,8 @@ void Game::initPlayer() {
 	this->player2->setPosition(900, 140);
 }
 
-void Game::initEndscreen()
-{
+void Game::initEndscreen() {
 	this->endscreen = new Endscreen();
-}
-
-void Game::initWorld() {
-	world = new World;
 }
 
 void Game::updateView() {
@@ -116,7 +109,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
 		player->attack();
-		if (player->get_attackBounds().intersects(player2->get_globalBounds()) && !pointsUpdated) {
+		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
 			player2->die();
 			die.play();
 			alive = false;
@@ -127,14 +120,15 @@ void Game::updatePlayer(sf::Time deltaTime) {
 			}
 			endscreen->endscreen_start(1.4, 4);
 		}
-	}else if (player2->is_dying_animation_finished()) {
+	}
+	else if (player2->is_dying_animation_finished()) {
 		start_Round();
 		countPoints = true;
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
 		player2->attack();
-		if (player2->get_attackBounds().intersects(player->get_globalBounds()) && !pointsUpdated) {
+		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
 			player->die();
 			die.play();
 			alive = false;
@@ -238,16 +232,9 @@ void Game::updatePollEvents() {
 	}
 }
 
-void Game::start_Round()
-{
+void Game::start_Round() {
 	initPlayer();
 	//initWorld();
-}
-
-void Game::start_round() {
-	initPlayer();
-	initWorld();
-	pointsUpdated = false;
 }
 
 void Game::render() {
@@ -257,10 +244,6 @@ void Game::render() {
 		world->render(this->window);
 		player->render(this->window);
 		player2->render(this->window);
-
-		if (showEndscreen) {
-			endscreen->render(this->window);
-		}
 	}
 	else if (state == State::inGameMenu || state == State::inMainMenu) {
 		menu->render(this->window);
@@ -269,10 +252,8 @@ void Game::render() {
 	if (!alive) {
 		endscreen->render(this->window);
 	}
-	}
 
-sf::Event Game::getEvent() {
-	return sf::Event();
+	window->display();
 }
 
 Game::~Game() {

@@ -61,10 +61,6 @@ public:
     bool is_attacking;
     bool is_alive;
 
-    bool isDyingAnimationFinished() const {
-        return !is_alive && dyingAnimation->isFinished();
-    }
-
     // Gameplay methods
     void attack();
     void die();

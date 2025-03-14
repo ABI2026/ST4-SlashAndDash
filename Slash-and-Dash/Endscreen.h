@@ -6,8 +6,7 @@
 
 using namespace std;
 
-class Endscreen
-{
+class Endscreen {
 private:
 	sf::RectangleShape shape;
 	sf::Text text;
@@ -26,4 +25,3 @@ public:
 	void render(sf::RenderWindow* target);
 
 };
-

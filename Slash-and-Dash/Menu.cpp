@@ -1,4 +1,5 @@
 #include "Menu.h"
+#include <iostream>
 
 Menu::Menu(float width, float height) : currentIndex(0), currentState(MainMenu) {
     if (!font.loadFromFile("Assets/Fonts/Roboto-Regular.ttf")) {

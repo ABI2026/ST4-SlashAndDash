@@ -146,7 +146,7 @@ void Player::updateAnimations() {
 
     }
     else {
-        if (dyingAnimation->isFinished()) sp.setPosition(sf::Vector2f(10000,10000));
+        if (dyingAnimation->isFinished()) sp.setPosition(sf::Vector2f(10000, 10000));
         if (dyingAnimation->isPlaying()) dyingAnimation->update();
     }
 }
@@ -266,8 +266,7 @@ void Player::render(sf::RenderWindow* target) {
     //target->draw(attack_range);
 }
 
-bool Player::is_dying_animation_finished()
-{
+bool Player::is_dying_animation_finished() {
     return !is_alive && dyingAnimation->isFinished();
 }
 
