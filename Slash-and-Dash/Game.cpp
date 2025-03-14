@@ -22,6 +22,7 @@ void Game::init() {
 	initVars();
 	initPlayer();
 	initEndscreen();
+	initWorld();
 }
 
 void Game::initWinow() {
@@ -37,7 +38,6 @@ void Game::initVars() {
 	state = State::inMainMenu;
 	fullscreen = false;
 	this->menu = new Menu(this->window->getSize().x, this->window->getSize().y);
-	world = new World;
 	alive = true;
 	countPoints = true;
 
@@ -49,6 +49,8 @@ void Game::initVars() {
 	die_buffer.loadFromFile("assets/Sounds/dying.wav");
 	die.setBuffer(die_buffer);
 	die.setLoop(false);
+
+	showEndscreen = false;
 }
 
 void Game::initPlayer() {
@@ -60,6 +62,10 @@ void Game::initPlayer() {
 void Game::initEndscreen()
 {
 	this->endscreen = new Endscreen();
+}
+
+void Game::initWorld() {
+	world = new World;
 }
 
 void Game::updateView() {
@@ -110,7 +116,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
 		player->attack();
-		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
+		if (player->get_attackBounds().intersects(player2->get_globalBounds()) && !pointsUpdated) {
 			player2->die();
 			die.play();
 			alive = false;
@@ -128,7 +134,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
 		player2->attack();
-		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
+		if (player2->get_attackBounds().intersects(player->get_globalBounds()) && !pointsUpdated) {
 			player->die();
 			die.play();
 			alive = false;
@@ -238,6 +244,12 @@ void Game::start_Round()
 	//initWorld();
 }
 
+void Game::start_round() {
+	initPlayer();
+	initWorld();
+	pointsUpdated = false;
+}
+
 void Game::render() {
 	window->clear();
 	window->setView(gameView);
@@ -245,6 +257,10 @@ void Game::render() {
 		world->render(this->window);
 		player->render(this->window);
 		player2->render(this->window);
+
+		if (showEndscreen) {
+			endscreen->render(this->window);
+		}
 	}
 	else if (state == State::inGameMenu || state == State::inMainMenu) {
 		menu->render(this->window);
@@ -253,8 +269,10 @@ void Game::render() {
 	if (!alive) {
 		endscreen->render(this->window);
 	}
+	}
 
-	window->display();
+sf::Event Game::getEvent() {
+	return sf::Event();
 }
 
 Game::~Game() {

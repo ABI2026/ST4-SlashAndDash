@@ -43,12 +43,15 @@ private:
 	void initVars();
 	void initPlayer();
 	void initEndscreen();
+	void initWorld();
 
 	void update(sf::Time deltaTime);
 	void updateMenu();
 	void updateView();
 	void updatePlayer(sf::Time deltaTime);
 	void updatePollEvents();
+
+	void start_round();
 
 	bool alive;
 	bool countPoints;
