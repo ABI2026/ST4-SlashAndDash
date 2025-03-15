@@ -74,4 +74,5 @@ public:
     sf::Vector2f get_Position();
     sf::FloatRect get_attackBounds() { return attack_range.getGlobalBounds(); }
     sf::FloatRect get_globalBounds() { return hitbox.getGlobalBounds(); }
+    int getJoystickID();
 };

@@ -155,6 +155,11 @@ sf::Vector2f Player::get_Position() {
     return sp.getPosition();
 }
 
+int Player::getJoystickID()
+{
+    return joystickId;
+}
+
 void Player::start_animation(int index) {
     switch (index) {
     case 0:

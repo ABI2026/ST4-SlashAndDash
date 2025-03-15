@@ -40,6 +40,8 @@ void Game::initVars() {
 	world = new World;
 	alive = true;
 	countPoints = true;
+	player1_won = false;
+	toMainMenu = false;
 
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
 	mBg.setVolume(10);
@@ -58,7 +60,8 @@ void Game::initPlayer() {
 }
 
 void Game::initEndscreen() {
-	this->endscreen = new Endscreen();
+
+	this->endscreen = new Endscreen(); 
 }
 
 void Game::updateView() {
@@ -113,17 +116,19 @@ void Game::updatePlayer(sf::Time deltaTime) {
 			player2->die();
 			die.play();
 			alive = false;
+			player1_won = true;
 			if (countPoints) {
 				points[0] += 1;
-				cout << "Player 1: " << points[0] << endl;
+				cout << "Player 0: " << points[0] << endl;
 				countPoints = false;
 			}
-			endscreen->endscreen_start(1.4, 4);
+			if(!toMainMenu && player1_won) endscreen->endscreen_start(1.4, 4);
 		}
 	}
-	else if (player2->is_dying_animation_finished()) {
+	else if (player2->is_dying_animation_finished() && endscreen->is_finished()) {
 		start_Round();
 		countPoints = true;
+		player1_won = false;
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
@@ -134,13 +139,13 @@ void Game::updatePlayer(sf::Time deltaTime) {
 			alive = false;
 			if (countPoints) {
 				points[1]++;
-				cout << "Player 2:" << points[1] << endl;
+				cout << "Player 1:" << points[1] << endl;
 				countPoints = false;
 			}
 			endscreen->endscreen_start(1.4, 4);
 		}
 	}
-	else if (player->is_dying_animation_finished()) {
+	else if (player->is_dying_animation_finished() && endscreen->is_finished()) {
 		start_Round();
 		countPoints = true;
 	}
@@ -150,7 +155,11 @@ void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
 	updatePlayer(deltaTime);
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
-	if (!alive) endscreen->update();
+	if (!alive && !toMainMenu && player1_won) { 
+		endscreen->update(0); 
+	}
+
+	else if (!alive && !toMainMenu && !player1_won) endscreen->update(1);
 }
 
 void Game::updateMenu() {
@@ -229,12 +238,25 @@ void Game::updatePollEvents() {
 			sf::FloatRect visibleArea(0, 0, e.size.width, e.size.height);
 			updateView();
 		}
+		if (points[0] == 3) {
+			toMainMenu = true;
+			points[0] = 0;
+			cout << "Player 1 win" << endl;
+			state = State::inMainMenu();
+		}
+		else if (points[1] == 3) {
+			points[1] = 0;
+			cout << "Player 2 win" << endl;
+			toMainMenu = true;
+			state = State::inMainMenu();
+		}
 	}
 }
 
 void Game::start_Round() {
 	initPlayer();
 	//initWorld();
+	//player1_won = false;
 }
 
 void Game::render() {

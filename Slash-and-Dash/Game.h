@@ -37,6 +37,8 @@ private:
 	Player* player2;
 	Endscreen* endscreen;
 	int points[2] = {};
+	bool toMainMenu;
+	bool player1_won;
 
 	void init();
 	void initWinow();
