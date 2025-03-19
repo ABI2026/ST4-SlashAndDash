@@ -7,8 +7,6 @@ Endscreen::Endscreen() {
 
 	if (!font.loadFromFile("Assets/Fonts/Roboto-Regular.ttf")) {}
 	text.setFont(font);
-	//player->getJoystickID() == 0 ? text.setString("Player 1 won the round") : text.setString("Player 2 won the round");
-	//text.setString("");
 	text.setFillColor(sf::Color::Red);
 	text.setCharacterSize(60);
 	text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height);
@@ -25,14 +23,24 @@ void Endscreen::update(int num) {
 	if (endscreenTime.getElapsedTime().asSeconds() > wait && endscreenTime.getElapsedTime().asSeconds() <= duration) {
 		render_screen = true;
 	}
-	num == 0 ? text.setString("Player 1 won the round") : text.setString("Player 2 won the round");
-	text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height);
-	text.setPosition(960 / 2, 540 / 2);
 }
 
-void Endscreen::endscreen_start(float wait, float duration) {
+void Endscreen::endscreen_start(float wait, float duration, int num) {
 	this->duration = duration;
 	this->wait = wait;
+
+	num == 0 ? text.setString("Player 1 won the round") : text.setString("Player 2 won the round");
+	text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height);
+	endscreenTime.restart();
+}
+
+void Endscreen::start_winning_screen(float wait, float duration, int num)
+{
+	this->duration = duration;
+	this->wait = wait;
+
+	num == 0 ? text.setString("Player 1 won the Game") : text.setString("Player 2 won the Game");
+	text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height);
 	endscreenTime.restart();
 }
 
@@ -41,7 +49,6 @@ void Endscreen::render(sf::RenderWindow* target) {
 		target->draw(shape);
 		target->draw(text);
 	}
-	//cout << "Endscreen wurde gezeichnet" << endl;
 }
 
 bool Endscreen::is_finished()

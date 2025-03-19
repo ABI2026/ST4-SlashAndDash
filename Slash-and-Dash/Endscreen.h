@@ -21,7 +21,8 @@ public:
 
 	Endscreen();
 	void update(int num);
-	void endscreen_start(float wait, float duration);
+	void endscreen_start(float wait, float duration, int num);
+	void start_winning_screen(float wait, float duration, int num);
 	~Endscreen() {};
 	void render(sf::RenderWindow* target);
 	bool is_finished();

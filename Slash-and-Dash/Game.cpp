@@ -122,7 +122,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 				cout << "Player 0: " << points[0] << endl;
 				countPoints = false;
 			}
-			if(!toMainMenu && player1_won) endscreen->endscreen_start(1.4, 4);
+			if(!toMainMenu && player1_won) endscreen->endscreen_start(1.4, 4, 0);
 		}
 	}
 	else if (player2->is_dying_animation_finished() && endscreen->is_finished()) {
@@ -142,7 +142,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 				cout << "Player 1:" << points[1] << endl;
 				countPoints = false;
 			}
-			endscreen->endscreen_start(1.4, 4);
+			endscreen->endscreen_start(1.4, 4, 1);
 		}
 	}
 	else if (player->is_dying_animation_finished() && endscreen->is_finished()) {
@@ -239,16 +239,27 @@ void Game::updatePollEvents() {
 			updateView();
 		}
 		if (points[0] == 3) {
-			toMainMenu = true;
-			points[0] = 0;
+			//toMainMenu = true;
+			//points[0] = 0;
 			cout << "Player 1 win" << endl;
-			state = State::inMainMenu();
+			endscreen->start_winning_screen(1.4, 4, 0);
+			if (endscreen->is_finished()) { 
+				cout << "aha";
+				toMainMenu = true;
+				state = State::inMainMenu(); 
+				points[0] = 0;
+			}
 		}
 		else if (points[1] == 3) {
-			points[1] = 0;
+			//points[1] = 0;
 			cout << "Player 2 win" << endl;
-			toMainMenu = true;
-			state = State::inMainMenu();
+			endscreen->start_winning_screen(1.4, 4, 1);
+			//toMainMenu = true;
+			if (endscreen->is_finished()) { 
+				toMainMenu = true;
+				state = State::inMainMenu(); 
+				points[1] = 0;
+			}
 		}
 	}
 }
