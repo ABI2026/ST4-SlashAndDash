@@ -160,8 +160,8 @@ void Game::update(sf::Time deltaTime) {
 	if (!alive && !toMainMenu && player1_won) { 
 		endscreen->update(0); 
 	}
-
 	else if (!alive && !toMainMenu && !player1_won) endscreen->update(1);
+	end_game();
 }
 
 void Game::updateMenu() {
@@ -241,7 +241,6 @@ void Game::updatePollEvents() {
 			updateView();
 		}
 	}
-	end_game();
 }
 
 void Game::start_game()
@@ -259,7 +258,7 @@ void Game::start_Round() {
 void Game::end_game()
 {
 	if (points[0] == 3) {
-		if (!endscreen->getEndscreen_started()) {
+		if (!endscreen->getWinning_screen_started()) {
 			bool_start_winning_screen = true;
 			endscreen->start_winning_screen(1.4, 4, 0);
 		}
@@ -271,7 +270,7 @@ void Game::end_game()
 		}
 	}
 	else if (points[1] == 3) {
-		if (!endscreen->getEndscreen_started()) {
+		if (!endscreen->getWinning_screen_started()) {
 			bool_start_winning_screen = true;
 			endscreen->start_winning_screen(1.4, 4, 1);
 		}

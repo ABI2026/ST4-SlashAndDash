@@ -10,9 +10,9 @@ Endscreen::Endscreen() {
 	text.setFillColor(sf::Color::Red);
 	text.setCharacterSize(60);
 	text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height);
-	text.setPosition(960 / 2, 540 / 2);
+	text.setPosition(480, 270);
 	render_screen = false;
-	endscreen_started = false;
+	winning_screen_started = false;
 }
 
 void Endscreen::update(int num) {
@@ -43,7 +43,7 @@ void Endscreen::start_winning_screen(float wait, float duration, int num)
 	num == 0 ? text.setString("Player 1 won the Game") : text.setString("Player 2 won the Game");
 	text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height);
 	endscreenTime.restart();
-	endscreen_started = true;
+	winning_screen_started = true;
 }
 
 void Endscreen::render(sf::RenderWindow* target) {
@@ -58,12 +58,8 @@ bool Endscreen::is_finished()
 	return endscreenTime.getElapsedTime().asSeconds() > duration;
 }
 
-bool Endscreen::getEndscreen_started()
+bool Endscreen::getWinning_screen_started()
 {
-	return endscreen_started;
+	return winning_screen_started;
 }
 
-bool Endscreen::getEndscreenTime(double num)
-{
-	return endscreenTime.getElapsedTime().asSeconds() > num;
-}

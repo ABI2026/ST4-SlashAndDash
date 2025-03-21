@@ -18,7 +18,7 @@ private:
 
 public:
 	sf::Clock endscreenTime;
-	bool endscreen_started;
+	bool winning_screen_started;
 
 	Endscreen();
 	void update(int num);
@@ -27,7 +27,5 @@ public:
 	~Endscreen() {};
 	void render(sf::RenderWindow* target);
 	bool is_finished();
-	bool getEndscreen_started();
-	bool getEndscreenTime(double num);
-
+	bool getWinning_screen_started();
 };
