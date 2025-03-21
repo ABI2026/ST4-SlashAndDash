@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation_Player.cpp" />
+    <ClCompile Include="Debug_Menu.cpp" />
     <ClCompile Include="Endscreen.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Layer.cpp" />
@@ -30,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation_Player.h" />
+    <ClInclude Include="Debug_Menu.h" />
     <ClInclude Include="Endscreen.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Layer.h" />

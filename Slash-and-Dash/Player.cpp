@@ -155,6 +155,16 @@ sf::Vector2f Player::get_Position() {
     return sp.getPosition();
 }
 
+float Player::get_PositionX()
+{
+    return sp.getPosition().x;
+}
+
+float Player::get_PositionY()
+{
+    return sp.getPosition().y;
+}
+
 int Player::getJoystickID()
 {
     return joystickId;

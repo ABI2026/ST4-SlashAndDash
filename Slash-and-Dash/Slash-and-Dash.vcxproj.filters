@@ -9,6 +9,7 @@
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Animation_Player.cpp" />
     <ClCompile Include="Endscreen.cpp" />
+    <ClCompile Include="Debug_Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
@@ -18,5 +19,6 @@
     <ClInclude Include="World.h" />
     <ClInclude Include="Animation_Player.h" />
     <ClInclude Include="Endscreen.h" />
+    <ClInclude Include="Debug_Menu.h" />
   </ItemGroup>
 </Project>

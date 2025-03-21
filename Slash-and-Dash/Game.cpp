@@ -32,6 +32,8 @@ void Game::initWinow() {
 	gameView.setCenter(viewWidth / 2, viewHeight / 2);
 	updateView();
 	window->setVerticalSyncEnabled(true);
+
+	this->debug_menu = new Debug_Menu();
 }
 
 void Game::initVars() {
@@ -44,6 +46,7 @@ void Game::initVars() {
 	player1_won = false;
 	toMainMenu = false;
 	bool_start_winning_screen = false;
+	//enable_debug_menu = true;
 
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
 	mBg.setVolume(10);
@@ -241,6 +244,7 @@ void Game::updatePollEvents() {
 			updateView();
 		}
 	}
+	if (enable_debug_menu)debug_menu->update(player, player2);
 }
 
 void Game::start_game()
@@ -298,6 +302,7 @@ void Game::render() {
 	if (!alive) {
 		endscreen->render(this->window);
 	}
+	if(enable_debug_menu)debug_menu->render(this->window);
 
 	window->display();
 }

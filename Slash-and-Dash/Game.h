@@ -5,6 +5,7 @@
 #include "World.h"
 #include "SFML/Audio.hpp"
 #include "Endscreen.h"
+#include "Debug_Menu.h"
 
 class Player;
 
@@ -36,6 +37,8 @@ private:
 	Player* player;
 	Player* player2;
 	Endscreen* endscreen;
+	Debug_Menu* debug_menu;
+	bool enable_debug_menu = false;
 	int points[2] = {};
 	bool toMainMenu;
 	bool player1_won;
