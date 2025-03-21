@@ -39,6 +39,7 @@ private:
 	int points[2] = {};
 	bool toMainMenu;
 	bool player1_won;
+	bool bool_start_winning_screen;
 
 	void init();
 	void initWinow();
@@ -54,15 +55,14 @@ private:
 
 	bool alive;
 	bool countPoints;
-	//sf::Clock endscreenTime;
 
 public:
+	void start_game();
 	void start_Round();
+	void end_game();
 
 	Game();
 	virtual ~Game();
 	void run();
 	void render();
-
-	sf::Event getEvent();
 };

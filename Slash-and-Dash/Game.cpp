@@ -12,6 +12,7 @@ void Game::run() {
 	while (this->window->isOpen()) {
 		sf::Time deltaTime = clock.restart();
 
+		if(toMainMenu) start_game();
 		update(deltaTime);
 		render();
 	}
@@ -42,6 +43,7 @@ void Game::initVars() {
 	countPoints = true;
 	player1_won = false;
 	toMainMenu = false;
+	bool_start_winning_screen = false;
 
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
 	mBg.setVolume(10);
@@ -122,10 +124,10 @@ void Game::updatePlayer(sf::Time deltaTime) {
 				cout << "Player 0: " << points[0] << endl;
 				countPoints = false;
 			}
-			if(!toMainMenu && player1_won) endscreen->endscreen_start(1.4, 4, 0);
+			if(!bool_start_winning_screen) endscreen->endscreen_start(1.4, 4, 0);
 		}
 	}
-	else if (player2->is_dying_animation_finished() && endscreen->is_finished()) {
+	else if (player2->is_dying_animation_finished() && endscreen->is_finished() && !bool_start_winning_screen) {
 		start_Round();
 		countPoints = true;
 		player1_won = false;
@@ -142,10 +144,10 @@ void Game::updatePlayer(sf::Time deltaTime) {
 				cout << "Player 1:" << points[1] << endl;
 				countPoints = false;
 			}
-			endscreen->endscreen_start(1.4, 4, 1);
+			if(!bool_start_winning_screen)endscreen->endscreen_start(1.4, 4, 1);
 		}
 	}
-	else if (player->is_dying_animation_finished() && endscreen->is_finished()) {
+	else if (player->is_dying_animation_finished() && endscreen->is_finished() && !bool_start_winning_screen) {
 		start_Round();
 		countPoints = true;
 	}
@@ -238,36 +240,48 @@ void Game::updatePollEvents() {
 			sf::FloatRect visibleArea(0, 0, e.size.width, e.size.height);
 			updateView();
 		}
-		if (points[0] == 3) {
-			//toMainMenu = true;
-			//points[0] = 0;
-			cout << "Player 1 win" << endl;
-			endscreen->start_winning_screen(1.4, 4, 0);
-			if (endscreen->is_finished()) { 
-				cout << "aha";
-				toMainMenu = true;
-				state = State::inMainMenu(); 
-				points[0] = 0;
-			}
-		}
-		else if (points[1] == 3) {
-			//points[1] = 0;
-			cout << "Player 2 win" << endl;
-			endscreen->start_winning_screen(1.4, 4, 1);
-			//toMainMenu = true;
-			if (endscreen->is_finished()) { 
-				toMainMenu = true;
-				state = State::inMainMenu(); 
-				points[1] = 0;
-			}
-		}
 	}
+	end_game();
+}
+
+void Game::start_game()
+{
+	initVars();
+	initPlayer();
+	initEndscreen();
 }
 
 void Game::start_Round() {
 	initPlayer();
 	//initWorld();
-	//player1_won = false;
+}
+
+void Game::end_game()
+{
+	if (points[0] == 3) {
+		if (!endscreen->getEndscreen_started()) {
+			bool_start_winning_screen = true;
+			endscreen->start_winning_screen(1.4, 4, 0);
+		}
+		if (endscreen->is_finished()) {
+			toMainMenu = true;
+			player1_won = false;
+			state = State::inMainMenu();
+			points[0] = 0;
+		}
+	}
+	else if (points[1] == 3) {
+		if (!endscreen->getEndscreen_started()) {
+			bool_start_winning_screen = true;
+			endscreen->start_winning_screen(1.4, 4, 1);
+		}
+		if (endscreen->is_finished()) {
+			toMainMenu = true;
+			player1_won = false;
+			state = State::inMainMenu();
+			points[1] = 0;
+		}
+	}
 }
 
 void Game::render() {
