@@ -46,7 +46,7 @@ void Game::initVars() {
 	player1_won = false;
 	toMainMenu = false;
 	bool_start_winning_screen = false;
-	//enable_debug_menu = true;
+	enable_debug_menu = true;
 
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
 	mBg.setVolume(10);
@@ -158,8 +158,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
-	updatePlayer(deltaTime);
-	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu();
+	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu(); else updatePlayer(deltaTime);
 	if (!alive && !toMainMenu && player1_won) { 
 		endscreen->update(0); 
 	}
