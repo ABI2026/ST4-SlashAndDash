@@ -16,6 +16,10 @@ private:
 	bool render_screen;
 	//Player* player;
 
+	sf::Sprite spBackground, spPlayer;
+	sf::Texture txBackground, txPlayer;
+
+
 public:
 	sf::Clock endscreenTime;
 	bool winning_screen_started;
