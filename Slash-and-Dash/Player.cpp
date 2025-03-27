@@ -28,6 +28,9 @@ void Player::initializeSprite() {
     sp.setTexture(tx);
     sp.setScale(0.8f, 0.8f);
 
+    sf::FloatRect bounds = sp.getLocalBounds();
+    sp.setOrigin(bounds.width / 2.0f,0);
+
     if (joystickId == 0) {
         sp.setPosition(50, 140);
     }
@@ -113,11 +116,12 @@ void Player::update(sf::Time deltaTime) {
 }
 
 void Player::updateColliders() {
-    hitbox.setPosition(sp.getPosition());
+    sf::Vector2f spriteCenter = sp.getPosition();
 
-    // Position attack range correctly based on hitbox
+    hitbox.setPosition(spriteCenter.x - hitbox.getSize().x / 2.0f, 0);
+
     float offsetX = hitbox.getSize().x * 0.87f;
-    attack_range.setPosition(hitbox.getPosition().x + offsetX, sp.getPosition().y);
+    attack_range.setPosition(hitbox.getPosition().x + offsetX, 0);
 }
 
 void Player::updateAnimations() {
