@@ -117,7 +117,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
 		player->attack();
-		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
+		if (player->get_attackBounds().intersects(player2->get_globalBounds()) && player->get_sword_position() != player2->get_sword_position()) {
 			player2->die();
 			die.play();
 			alive = false;
@@ -138,7 +138,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
 		player2->attack();
-		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
+		if (player2->get_attackBounds().intersects(player->get_globalBounds()) && player->get_sword_position() != player2->get_sword_position()) {
 			player->die();
 			die.play();
 			alive = false;

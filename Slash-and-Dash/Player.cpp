@@ -7,6 +7,9 @@ Player::Player(unsigned int joystickId)
     , is_walking(false)
     , is_alive(true)
     , is_attacking(false)
+    , sword_position(1)
+    , wPressed(false)
+    , sPressed(false)
     , facing_right(joystickId == 0) // Player 1 faces right by default
 {
     initializeTextures();
@@ -227,6 +230,22 @@ float Player::handleInput(float deltaTime) {
             movementX = speed * -deltaTime;
             setFacingDirection(false);
         }
+        // sword pos
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && sword_position != 2 && !wPressed) {
+            sword_position++;
+            wPressed = true;
+        }
+        else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            wPressed = false;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sword_position != 0 && !sPressed) {
+            sword_position--;
+            sPressed = true;
+        }
+        else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            sPressed = false;
+        }
     }
     // Keyboard input for player 2
     else {
@@ -237,6 +256,22 @@ float Player::handleInput(float deltaTime) {
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::H) && sp.getPosition().x > 0) {
             movementX = speed * -deltaTime;
             setFacingDirection(false);
+        }
+        // sword pos
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::U) && sword_position != 2 && !wPressed) {
+            sword_position++;
+            wPressed = true;
+        }
+        else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::U)) {
+            wPressed = false;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::J) && sword_position != 0 && !sPressed) {
+            sword_position--;
+            sPressed = true;
+        }
+        else if (!sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
+            sPressed = false;
         }
     }
 
