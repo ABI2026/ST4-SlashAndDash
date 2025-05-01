@@ -48,6 +48,13 @@ void Game::initVars() {
 	bool_start_winning_screen = false;
 	enable_debug_menu = true;
 
+	// Reset Controller Flags
+	player1AttackPressed = false;
+	player2AttackPressed = false;
+	menuConfirmPressed = false;
+	menuBackPressed = false;
+
+
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
 	mBg.setVolume(10);
 	mBg.play();
@@ -100,7 +107,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 	sf::Vector2f prevPos2 = player2->get_Position();
 	sf::Vector2f prevAveragePosition = (prevPos1 + prevPos2) * 0.5f;
 
-	player->update(deltaTime);
+	player->update(deltaTime); // Beinhaltet Player::handleInput für Bewegung
 	player2->update(deltaTime);
 
 	sf::Vector2f currentPos1 = player->get_Position();
@@ -115,135 +122,212 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	world->update(directionDot > 0 ? movement.x : 0);
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
+	// --- Angriff durch Spieler 1 (Controller oder Maus) ---
+	// ALT: if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
+	if ((player1AttackPressed || sf::Mouse::isButtonPressed(sf::Mouse::Left)) && player->is_alive) {
+		player1AttackPressed = false; // Flag sofort zurücksetzen
 		player->attack();
 		if (player->get_attackBounds().intersects(player2->get_globalBounds()) && player->get_sword_position() != player2->get_sword_position()) {
 			player2->die();
 			die.play();
-			alive = false;
-			player1_won = true;
+			alive = false; // Spielzustand ändern (wird im Haupt-Update geprüft)
+			player1_won = true; // Merken wer gewonnen hat
 			if (countPoints) {
-				points[0] += 1;
-				cout << "Player 0: " << points[0] << endl;
-				countPoints = false;
+				points[0]++;
+				std::cout << "Player 0: " << points[0] << std::endl;
+				countPoints = false; // Punkte nur einmal pro Runde zählen
 			}
-			if(!bool_start_winning_screen) endscreen->endscreen_start(1.4, 4, 0);
+			// Endscreen startet nur, wenn nicht bereits ein Gewinn-Screen läuft
+			if (!bool_start_winning_screen) endscreen->endscreen_start(1.4, 4, 0);
 		}
 	}
 	else if (player2->is_dying_animation_finished() && endscreen->is_finished() && !bool_start_winning_screen) {
+		// Runde neu starten, wenn Spieler 2 gestorben ist und Endscreen fertig
 		start_Round();
-		countPoints = true;
+		countPoints = true; // Punkte zählen wieder erlauben
 		player1_won = false;
+		alive = true; // Spielzustand wiederherstellen
 	}
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
+	// --- Angriff durch Spieler 2 (Controller oder Maus) ---
+	// ALT: if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
+	if ((player2AttackPressed || sf::Mouse::isButtonPressed(sf::Mouse::Right)) && player2->is_alive) {
+		player2AttackPressed = false; // Flag sofort zurücksetzen
 		player2->attack();
 		if (player2->get_attackBounds().intersects(player->get_globalBounds()) && player->get_sword_position() != player2->get_sword_position()) {
 			player->die();
 			die.play();
-			alive = false;
+			alive = false; // Spielzustand ändern
+			player1_won = false; // Spieler 2 hat diese Runde gewonnen
 			if (countPoints) {
 				points[1]++;
-				cout << "Player 1:" << points[1] << endl;
-				countPoints = false;
+				std::cout << "Player 1: " << points[1] << std::endl;
+				countPoints = false; // Punkte nur einmal pro Runde zählen
 			}
-			if(!bool_start_winning_screen)endscreen->endscreen_start(1.4, 4, 1);
+			// Endscreen startet nur, wenn nicht bereits ein Gewinn-Screen läuft
+			if (!bool_start_winning_screen) endscreen->endscreen_start(1.4, 4, 1);
 		}
 	}
 	else if (player->is_dying_animation_finished() && endscreen->is_finished() && !bool_start_winning_screen) {
+		// Runde neu starten, wenn Spieler 1 gestorben ist und Endscreen fertig
 		start_Round();
-		countPoints = true;
+		countPoints = true; // Punkte zählen wieder erlauben
+		alive = true; // Spielzustand wiederherstellen
 	}
 }
 
 void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
-	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu(); else updatePlayer(deltaTime);
-	if (!alive && !toMainMenu && player1_won) { 
-		endscreen->update(0); 
+
+	if (state == State::inGameMenu || state == State::inMainMenu) {
+		updateMenu();
 	}
-	else if (!alive && !toMainMenu && !player1_won) endscreen->update(1);
+	else if (state == State::Playing) {
+		updatePlayer(deltaTime);
+	}
+
+	if (!alive || bool_start_winning_screen) {
+		int winner = player1_won ? 0 : 1;
+		endscreen->update(winner);
+	}
+
 	end_game();
 }
 
 void Game::updateMenu() {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-		int selectedOption = menu->getSelectedOption();
 
-		switch (menu->getState()) {
-		case Menu::MainMenu:
-			if (selectedOption == 0) {
-				state = State::Playing;
+	// --- Menü-Navigation (Polling mit Verzögerung) ---
+	bool navigated = false; // Um Mehrfachnavigation pro Frame zu verhindern
+	if (menuNavClock.getElapsedTime() > menuNavDelay) {
+		for (unsigned int i = 0; i < sf::Joystick::Count; ++i) {
+			if (sf::Joystick::isConnected(i)) {
+				// D-Pad Y-Achse (oft invertiert: oben = positiv)
+				float povY = sf::Joystick::getAxisPosition(i, sf::Joystick::PovY);
+				// Linker Stick Y-Achse (normal: oben = negativ)
+				float stickY = sf::Joystick::getAxisPosition(i, sf::Joystick::Y);
+
+				// Schwellenwerte prüfen
+				if (povY > 50 || stickY < -50) { // Nach oben
+					menu->moveUp();
+					menuNavClock.restart(); // Timer zurücksetzen
+					navigated = true;
+					break; // Nur Input von einem Controller pro Frame
+				}
+				else if (povY < -50 || stickY > 50) { // Nach unten
+					menu->moveDown();
+					menuNavClock.restart(); // Timer zurücksetzen
+					navigated = true;
+					break; // Nur Input von einem Controller pro Frame
+				}
+				// Optional: Hier PovX / X für Links/Rechts hinzufügen, falls benötigt
 			}
-			if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
-			else if (selectedOption == 2) window->close();
-			break;
-
-		case Menu::SettingsMenu:
-			if (selectedOption == 0) menu->setState(Menu::SoundMenu, window->getSize());
-			else if (selectedOption == 1) menu->setState(Menu::DisplayMenu, window->getSize());
-			else if (selectedOption == 2) menu->setState(Menu::MainMenu, window->getSize());
-			break;
-
-		case Menu::SoundMenu:
-			if (selectedOption == 0) mBg.play();
-			if (selectedOption == 1) mBg.pause();
-			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
-			break;
-		case Menu::DisplayMenu:
-			if (selectedOption == 0) {
-				fullscreen = !fullscreen;
-				window->create(sf::VideoMode(960, 540),
-					"Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
-				updateView();
-				menu->setState(Menu::DisplayMenu, window->getSize());
-			}
-			if (selectedOption == 1) menu->setState(Menu::ResolutionMenu, window->getSize());
-			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
-			break;
-		case Menu::ResolutionMenu:
-			std::vector<int> res = menu->getSelectetResolution(selectedOption);
-			window->create(sf::VideoMode(res[0], res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
-			menu->setState(Menu::ResolutionMenu, window->getSize());
-			break;
 		}
-		while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+	// --- Menü Aktionen (Bestätigen / Zurück via Flags) ---
+	if (menuConfirmPressed) {
+		menuConfirmPressed = false; // Flag zurücksetzen
+		handleMenuSelection();
+	}
+	else if (menuBackPressed) {
+		menuBackPressed = false; // Flag zurücksetzen
+		handleMenuBack();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !navigated) {
 		menu->moveUp();
-		while (sf::Keyboard::isKeyPressed(sf::Keyboard::W));
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::W)); // Verhindert Halten
+	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && !navigated) {
 		menu->moveDown();
-		while (sf::Keyboard::isKeyPressed(sf::Keyboard::S));
-	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-		menu->setState(Menu::MainMenu, window->getSize());
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::S)); // Verhindert Halten
+	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		 handleMenuSelection();
+		 while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)); // Verhindert Halten
+	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) { // Wird bereits in pollEvents behandelt
+		 handleMenuBack();
+		 while (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
 	}
 }
 
 void Game::updatePollEvents() {
+	// Flags für diesen Frame zurücksetzen (für gedrückte Tasten wie bei Keyboard)
+	// Angriff/Menü wird nur einmal pro Druck ausgelöst, daher kein Reset hier nötig.
 
 	while (window->pollEvent(e)) {
 		if (e.type == sf::Event::Closed) {
 			window->close();
 		}
-		if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Escape) {
-			if (state == State::Playing) {
-				state = State::inGameMenu;
+
+		// --- Tastatur Events ---
+		if (e.type == sf::Event::KeyPressed) {
+			if (e.key.code == sf::Keyboard::Escape) {
+				if (state == State::Playing) {
+					state = State::inGameMenu;
+					menu->setState(Menu::MainMenu, window->getSize()); // Gehe zum Hauptmenü im Pause-Modus
+					menu->resetCurrentIndex();
+				}
+				else if (state == State::inGameMenu || state == State::inMainMenu) {
+					// Handle "Zurück" im Menü durch Escape
+					handleMenuBack();
+				}
 			}
-			else if (state == State::inGameMenu) {
-				menu->resetCurrentIndex();
-				state = State::Playing;
+			// Tastatur-Menüsteuerung (wird in updateMenu behandelt, falls gewünscht)
+			if ((state == State::inGameMenu || state == State::inMainMenu)) {
+				if (e.key.code == sf::Keyboard::W) menu->moveUp();
+				else if (e.key.code == sf::Keyboard::S) menu->moveDown();
+				else if (e.key.code == sf::Keyboard::Enter) handleMenuSelection();
 			}
 		}
+
+		// --- Fenster Events ---
 		if (e.type == sf::Event::Resized) {
 			sf::FloatRect visibleArea(0, 0, e.size.width, e.size.height);
 			updateView();
+			// Menü an neue Größe anpassen, falls im Menü
+			if (state == State::inGameMenu || state == State::inMainMenu) {
+				menu->setState(menu->getState(), window->getSize()); // Aktuellen Menüstatus neu laden mit neuer Größe
+			}
 		}
+
+		// --- Controller Connect / Disconnect Events ---
+		if (e.type == sf::Event::JoystickConnected) {
+			std::cout << "Controller verbunden: " << e.joystickConnect.joystickId << std::endl;
+		}
+		if (e.type == sf::Event::JoystickDisconnected) {
+			std::cout << "Controller getrennt: " << e.joystickConnect.joystickId << std::endl;
+			// Hier könnte man Logik hinzufügen, z.B. Spiel pausieren
+		}
+
+		// --- Controller Button Events ---
+		if (e.type == sf::Event::JoystickButtonPressed) {
+			unsigned int joystickId = e.joystickButton.joystickId;
+			unsigned int button = e.joystickButton.button;
+
+			// Angriff (nur im Spielzustand)
+			if (state == State::Playing) {
+				if (joystickId == player->getJoystickID() && button == 0) { // Annahme: Button 0 = Angriff P1
+					player1AttackPressed = true;
+				}
+				else if (joystickId == player2->getJoystickID() && button == 0) { // Annahme: Button 0 = Angriff P2
+					player2AttackPressed = true;
+				}
+			}
+
+			// Menü Interaktion (nur im Menüzustand)
+			if (state == State::inGameMenu || state == State::inMainMenu) {
+				if (button == 0) { // Annahme: Button 0 = Bestätigen
+					menuConfirmPressed = true;
+				}
+				else if (button == 1) { // Annahme: Button 1 = Zurück
+					menuBackPressed = true;
+				}
+			}
+		}
+		// Optional: JoystickButtonReleased Event verarbeiten, falls benötigt
 	}
-	if (enable_debug_menu)debug_menu->update(player, player2);
+
+	// Debug Menü Update (außerhalb der Schleife, wird jeden Frame gemacht)
+	if (enable_debug_menu) debug_menu->update(player, player2);
 }
 
 void Game::start_game()
@@ -284,6 +368,85 @@ void Game::end_game()
 			points[1] = 0;
 		}
 	}
+}
+
+void Game::handleMenuSelection() {
+	int selectedOption = menu->getSelectedOption();
+	sf::Vector2u windowSize = window->getSize();
+
+	switch (menu->getState()) {
+	case Menu::MainMenu:
+		if (selectedOption == 0) {
+			state = State::Playing;
+			// Eventuell hier das Menü ausblenden
+		}
+		else if (selectedOption == 1) {
+			menu->setState(Menu::SettingsMenu, windowSize);
+		}
+		else if (selectedOption == 2) {
+			window->close();
+		}
+		break;
+
+	case Menu::SettingsMenu:
+		if (selectedOption == 0) menu->setState(Menu::SoundMenu, windowSize);
+		else if (selectedOption == 1) menu->setState(Menu::DisplayMenu, windowSize);
+		else if (selectedOption == 2) menu->setState(Menu::MainMenu, windowSize);
+		break;
+
+	case Menu::SoundMenu:
+		if (selectedOption == 0) mBg.play();
+		if (selectedOption == 1) mBg.pause();
+		if (selectedOption == 2) menu->setState(Menu::SettingsMenu, windowSize);
+		break;
+
+	case Menu::DisplayMenu:
+		if (selectedOption == 0) {
+			fullscreen = !fullscreen;
+			window->create(sf::VideoMode(960, 540), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close | sf::Style::Titlebar);
+			updateView();
+			menu->setState(Menu::DisplayMenu, window->getSize());
+		}
+		else if (selectedOption == 1) {
+			menu->setState(Menu::ResolutionMenu, windowSize);
+		}
+		else if (selectedOption == 2) {
+			menu->setState(Menu::SettingsMenu, windowSize);
+		}
+		break;
+
+	case Menu::ResolutionMenu:
+	{
+		std::vector<int> res = menu->getSelectetResolution(selectedOption);
+		window->create(sf::VideoMode(res[0], res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close | sf::Style::Titlebar);
+		updateView(); // Wichtig!
+		menu->setState(Menu::ResolutionMenu, window->getSize());
+	}
+	break;
+	}
+	// menu->resetCurrentIndex();
+}
+
+void Game::handleMenuBack() {
+	sf::Vector2u windowSize = window->getSize();
+	switch (menu->getState()) {
+		// Von Untermenüs zurück zum übergeordneten Menü
+	case Menu::SettingsMenu:
+	case Menu::SoundMenu:
+	case Menu::DisplayMenu:
+	case Menu::ResolutionMenu:
+		menu->setState(Menu::SettingsMenu, windowSize);
+		break;
+
+	case Menu::MainMenu:
+		if (state == State::inGameMenu) {
+			state = State::Playing;
+		}
+		break;
+	default:
+		break;
+	}
+	// menu->resetCurrentIndex();
 }
 
 void Game::render() {
