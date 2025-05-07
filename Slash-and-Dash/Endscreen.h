@@ -18,18 +18,29 @@ private:
 
 	sf::Sprite spBackground, spPlayer;
 	sf::Texture txBackground, txPlayer;
+	sf::Sprite spCoin;
+	sf::Texture txCoin;
 
 
 public:
 	sf::Clock endscreenTime;
 	bool winning_screen_started;
+	//bool winning_screen_or_end_screen; // true = endscrren false = winningscreen
+	bool end_round_screen;
+	bool winning_screen;
+	float arrayCoinPlayer_x[3];
+	float arrayCoinPlayer_y[3];
+	
 
 	Endscreen();
-	void update(int num);
-	void endscreen_start(float wait, float duration, int num);
+	void update();
+	void endscreen_start(float wait, float duration);
 	void start_winning_screen(float wait, float duration, int num);
 	~Endscreen() {};
 	void render(sf::RenderWindow* target);
+	void moveCoin(int coinIndex);
 	bool is_finished();
-	bool getWinning_screen_started();
+	void reset_coin();
+	void restart_time();
+	bool is_winning_screen_started();
 };

@@ -127,7 +127,9 @@ void Game::updatePlayer(sf::Time deltaTime) {
 				cout << "Player 0: " << points[0] << endl;
 				countPoints = false;
 			}
-			if(!bool_start_winning_screen) endscreen->endscreen_start(1.4, 4, 0);
+			if (!bool_start_winning_screen) { 
+				endscreen->endscreen_start(1.4, 6); 
+			}
 		}
 	}
 	else if (player2->is_dying_animation_finished() && endscreen->is_finished() && !bool_start_winning_screen) {
@@ -147,7 +149,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 				cout << "Player 1:" << points[1] << endl;
 				countPoints = false;
 			}
-			if(!bool_start_winning_screen)endscreen->endscreen_start(1.4, 4, 1);
+			if(!bool_start_winning_screen)endscreen->endscreen_start(1.4, 6);
 		}
 	}
 	else if (player->is_dying_animation_finished() && endscreen->is_finished() && !bool_start_winning_screen) {
@@ -159,10 +161,9 @@ void Game::updatePlayer(sf::Time deltaTime) {
 void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu(); else updatePlayer(deltaTime);
-	if (!alive && !toMainMenu && player1_won) { 
-		endscreen->update(0); 
-	}
-	else if (!alive && !toMainMenu && !player1_won) endscreen->update(1);
+	
+	endscreen->update();
+
 	end_game();
 }
 
@@ -243,7 +244,7 @@ void Game::updatePollEvents() {
 			updateView();
 		}
 	}
-	if (enable_debug_menu)debug_menu->update(player, player2);
+	if (enable_debug_menu)debug_menu->update(player, player2, window);
 }
 
 void Game::start_game()
@@ -261,7 +262,7 @@ void Game::start_Round() {
 void Game::end_game()
 {
 	if (points[0] == 3) {
-		if (!endscreen->getWinning_screen_started()) {
+		if (!endscreen->is_winning_screen_started()) {
 			bool_start_winning_screen = true;
 			endscreen->start_winning_screen(1.4, 4, 0);
 		}
@@ -273,7 +274,7 @@ void Game::end_game()
 		}
 	}
 	else if (points[1] == 3) {
-		if (!endscreen->getWinning_screen_started()) {
+		if (!endscreen->is_winning_screen_started()) {
 			bool_start_winning_screen = true;
 			endscreen->start_winning_screen(1.4, 4, 1);
 		}
