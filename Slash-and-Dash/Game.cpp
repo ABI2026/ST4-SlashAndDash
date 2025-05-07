@@ -195,139 +195,83 @@ void Game::update(sf::Time deltaTime) {
 }
 
 void Game::updateMenu() {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		int selectedOption = menu->getSelectedOption();
 
-	// --- Men--Navigation (Polling mit Verz-gerung) ---
-	bool navigated = false; // Um Mehrfachnavigation pro Frame zu verhindern
-	if (menuNavClock.getElapsedTime() > menuNavDelay) {
-		for (unsigned int i = 0; i < sf::Joystick::Count; ++i) {
-			if (sf::Joystick::isConnected(i)) {
-				// D-Pad Y-Achse (oft invertiert: oben = positiv)
-				float povY = sf::Joystick::getAxisPosition(i, sf::Joystick::PovY);
-				// Linker Stick Y-Achse (normal: oben = negativ)
-				float stickY = sf::Joystick::getAxisPosition(i, sf::Joystick::Y);
-
-				// Schwellenwerte prufen
-				if (povY > 50 || stickY < -50) { // Nach oben
-					menu->moveUp();
-					menuNavClock.restart(); // Timer zurucksetzen
-					navigated = true;
-					break; // Nur Input von einem Controller pro Frame
-				}
-				else if (povY < -50 || stickY > 50) { // Nach unten
-					menu->moveDown();
-					menuNavClock.restart(); // Timer zurucksetzen
-					navigated = true;
-					break; // Nur Input von einem Controller pro Frame
-				}
-				// Optional: Hier PovX / X fur Links/Rechts hinzuf-gen, falls benotigt
+		switch (menu->getState()) {
+		case Menu::MainMenu:
+			if (selectedOption == 0) {
+				state = State::Playing;
 			}
+			if (selectedOption == 1) menu->setState(Menu::SettingsMenu, window->getSize());
+			else if (selectedOption == 2) window->close();
+			break;
+
+		case Menu::SettingsMenu:
+			if (selectedOption == 0) menu->setState(Menu::SoundMenu, window->getSize());
+			else if (selectedOption == 1) menu->setState(Menu::DisplayMenu, window->getSize());
+			else if (selectedOption == 2) menu->setState(Menu::MainMenu, window->getSize());
+			break;
+
+		case Menu::SoundMenu:
+			if (selectedOption == 0) mBg.play();
+			if (selectedOption == 1) mBg.pause();
+			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
+			break;
+		case Menu::DisplayMenu:
+			if (selectedOption == 0) {
+				fullscreen = !fullscreen;
+				window->create(sf::VideoMode(960, 540),
+					"Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
+				updateView();
+				menu->setState(Menu::DisplayMenu, window->getSize());
+			}
+			if (selectedOption == 1) menu->setState(Menu::ResolutionMenu, window->getSize());
+			if (selectedOption == 2) menu->setState(Menu::SettingsMenu, window->getSize());
+			break;
+		case Menu::ResolutionMenu:
+			std::vector<int> res = menu->getSelectetResolution(selectedOption);
+			window->create(sf::VideoMode(res[0], res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close);
+			menu->setState(Menu::ResolutionMenu, window->getSize());
+			break;
 		}
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter));
 	}
 
-	// --- Men- Aktionen (Bestatigen / Zuruck via Flags) ---
-	if (menuConfirmPressed) {
-		menuConfirmPressed = false; // Flag zurucksetzen
-		handleMenuSelection();
-	}
-	else if (menuBackPressed) {
-		menuBackPressed = false; // Flag zur-cksetzen
-		handleMenuBack();
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !navigated) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		menu->moveUp();
-		while (sf::Keyboard::isKeyPressed(sf::Keyboard::W)); // Verhindert Halten
-	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && !navigated) {
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::W));
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 		menu->moveDown();
-		while (sf::Keyboard::isKeyPressed(sf::Keyboard::S)); // Verhindert Halten
-	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-		 handleMenuSelection();
-		 while (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)); // Verhindert Halten
-	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) { // Wird bereits in pollEvents behandelt
-		 handleMenuBack();
-		 while (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape));
+		while (sf::Keyboard::isKeyPressed(sf::Keyboard::S));
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+		menu->setState(Menu::MainMenu, window->getSize());
 	}
 }
 
 void Game::updatePollEvents() {
-	// Flags fur diesen Frame zurucksetzen (f-r gedr-ckte Tasten wie bei Keyboard)
-	// Angriff/Menu wird nur einmal pro Druck ausgel-st, daher kein Reset hier n-tig.
 
 	while (window->pollEvent(e)) {
 		if (e.type == sf::Event::Closed) {
 			window->close();
 		}
-
-		// --- Tastatur Events ---
-		if (e.type == sf::Event::KeyPressed) {
-			if (e.key.code == sf::Keyboard::Escape) {
-				if (state == State::Playing) {
-					state = State::inGameMenu;
-					menu->setState(Menu::MainMenu, window->getSize()); // Gehe zum Hauptmen- im Pause-Modus
-					menu->resetCurrentIndex();
-				}
-				else if (state == State::inGameMenu || state == State::inMainMenu) {
-					// Handle "Zuruck" im Menu durch Escape
-					handleMenuBack();
-				}
+		if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Escape) {
+			if (state == State::Playing) {
+				state = State::inGameMenu;
 			}
-			// Tastatur-Menusteuerung (wird in updateMenu behandelt, falls gew-nscht)
-			if ((state == State::inGameMenu || state == State::inMainMenu)) {
-				if (e.key.code == sf::Keyboard::W) menu->moveUp();
-				else if (e.key.code == sf::Keyboard::S) menu->moveDown();
-				else if (e.key.code == sf::Keyboard::Enter) handleMenuSelection();
+			else if (state == State::inGameMenu) {
+				menu->resetCurrentIndex();
+				state = State::Playing;
 			}
 		}
-
-		// --- Fenster Events ---
 		if (e.type == sf::Event::Resized) {
 			sf::FloatRect visibleArea(0, 0, e.size.width, e.size.height);
 			updateView();
-			// Menu an neue Groese anpassen, falls im Menu
-			if (state == State::inGameMenu || state == State::inMainMenu) {
-				menu->setState(menu->getState(), window->getSize()); // Aktuellen Men-status neu laden mit neuer Gr--e
-			}
 		}
-
-		// --- Controller Connect / Disconnect Events ---
-		if (e.type == sf::Event::JoystickConnected) {
-			std::cout << "Controller verbunden: " << e.joystickConnect.joystickId << std::endl;
-		}
-		if (e.type == sf::Event::JoystickDisconnected) {
-			std::cout << "Controller getrennt: " << e.joystickConnect.joystickId << std::endl;
-			// Hier konnte man Logik hinzufugen, z.B. Spiel pausieren
-		}
-
-		// --- Controller Button Events ---
-		if (e.type == sf::Event::JoystickButtonPressed) {
-			unsigned int joystickId = e.joystickButton.joystickId;
-			unsigned int button = e.joystickButton.button;
-
-			// Angriff (nur im Spielzustand)
-			if (state == State::Playing) {
-				if (joystickId == player->getJoystickID() && button == 0) { // Annahme: Button 0 = Angriff P1
-					player1AttackPressed = true;
-				}
-				else if (joystickId == player2->getJoystickID() && button == 0) { // Annahme: Button 0 = Angriff P2
-					player2AttackPressed = true;
-				}
-			}
-
-			// Menu Interaktion (nur im Menuzustand)
-			if (state == State::inGameMenu || state == State::inMainMenu) {
-				if (button == 0) { // Annahme: Button 0 = Bestatigen
-					menuConfirmPressed = true;
-				}
-				else if (button == 1) { // Annahme: Button 1 = Zuruck
-					menuBackPressed = true;
-				}
-			}
-		}
-		// Optional: JoystickButtonReleased Event verarbeiten, falls benotigt
 	}
-
-	// Debug Menu Update (ausserhalb der Schleife, wird jeden Frame gemacht)
-	if (enable_debug_menu) debug_menu->update(player, player2);
+	if (enable_debug_menu)debug_menu->update(player, player2);
 }
 
 void Game::start_game()
