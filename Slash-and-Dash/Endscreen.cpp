@@ -28,9 +28,13 @@ Endscreen::Endscreen() {
 	coinArr[0].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
 	coinArr[0].setPosition(60.f, 50.f);
 	coinArr[0].setScale(2.21387f, 2.21387f);
+
+	coinArr[1].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
+	coinArr[1].setPosition(170.f, 50.f);
+	coinArr[1].setScale(2.21387f, 2.21387f);
 }
 
-void Endscreen::update() {
+void Endscreen::update(int countP1, int countP2) {
 	/*if (endscreenTime.getElapsedTime().asSeconds() >= duration && endscreenTime.getElapsedTime().asSeconds() < duration + 1) {
 		render_screen = false;
 
@@ -49,7 +53,13 @@ void Endscreen::update() {
 		render_screen = false;
 	}
 
-	if(end_round_screen && elapsed >= 1.4) moveCoin(0);
+	if(end_round_screen && elapsed >= 1.4 && countP1 == 1) moveCoin(0, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP1 == 2) moveCoin(1, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP1 == 3) moveCoin(2, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 4) moveCoin(3, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 5) moveCoin(4, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 6) moveCoin(5, countP1, countP2);
+	
 
 	if (is_finished()) { 
 		end_round_screen = false;
@@ -106,15 +116,15 @@ void Endscreen::render(sf::RenderWindow* target) {
 		}
 	}
 
-	if (coin1) target->draw(coinArr[0]);
-	if (coin2) target->draw(coinArr[1]);
+	if (coin1 && !winning_screen) target->draw(coinArr[0]);
+	if (coin2 && !winning_screen) target->draw(coinArr[1]);
 	if (coin3) target->draw(coinArr[2]);
 	if (coin4) target->draw(coinArr[3]);
 	if (coin5) target->draw(coinArr[4]);
 	if (coin6) target->draw(coinArr[5]);
 }
 
-void Endscreen::moveCoin(int coinIndex)
+void Endscreen::moveCoin(int coinIndex, int pointsP1, int pointsP2)
 {
 
 	sf::Vector2f targetPos;
@@ -130,10 +140,11 @@ void Endscreen::moveCoin(int coinIndex)
 		//coin1 = true;
 		break;
 	case 1: //nicht fertig
-		targetPos = sf::Vector2f(120.f, 80.f);
-		moveX = -2.5f;
-		moveY = -1.2f;
-		shrinkFactor = 0.99f;
+		targetPos = sf::Vector2f(170.f, 60.f);
+		moveX = -2.8f;
+		moveY = -2.f;
+		shrinkFactor = 0.980f;
+		//coin2 = true;
 		break;
 	case 2: // nicht fertig
 		targetPos = sf::Vector2f(180.f, 100.f);
@@ -154,11 +165,19 @@ void Endscreen::moveCoin(int coinIndex)
 
 		sf::Vector2f scale = spCoin.getScale();
 
-		if (scale.x > 0.1f && scale.y > 0.1f) {
+		if (scale.x > 2.21387f && scale.y > 2.21387f) {
 			spCoin.setScale(scale.x * shrinkFactor, scale.y * shrinkFactor);
 		}
 	}
-	else coin1 = true;
+	else { 
+		if(pointsP1 >= 1) coin1 = true;
+		if (pointsP1 >= 2) coin2 = true;
+		if (pointsP1 >= 3) coin3 = true;
+		if (pointsP2 >= 1) coin4 = true;
+		if (pointsP2 >= 2) coin5 = true;
+		if (pointsP2 >= 3) coin6 = true;
+
+	}
 
 	arrayCoinPlayer_x[coinIndex] = spCoin.getPosition().x;
 	arrayCoinPlayer_y[coinIndex] = spCoin.getPosition().y;

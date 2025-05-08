@@ -35,12 +35,12 @@ public:
 	sf::Sprite coinArr[6];
 
 	Endscreen();
-	void update();
+	void update(int countP1, int countP2);
 	void endscreen_start(float wait, float duration);
 	void start_winning_screen(float wait, float duration, int num);
 	~Endscreen() {};
 	void render(sf::RenderWindow* target);
-	void moveCoin(int coinIndex);
+	void moveCoin(int coinIndex, int pointsP1, int pointsP2);
 	bool is_finished();
 	void reset_coin();
 	void restart_time();

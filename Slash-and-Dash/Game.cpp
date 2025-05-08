@@ -162,7 +162,7 @@ void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
 	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu(); else updatePlayer(deltaTime);
 	
-	endscreen->update();
+	endscreen->update(points[0], points[1]);
 
 	end_game();
 }
