@@ -19,6 +19,15 @@ Endscreen::Endscreen() {
 	render_screen = false;
 	winning_screen = false;
 	end_round_screen = false;
+	coin1 = false, coin2 = false, coin3 = false, coin4 = false, coin5 = false, coin6 = false;
+
+	for (int i = 0; i < 6; i++) {
+		coinArr[i].setTexture(txCoin);
+	}
+
+	coinArr[0].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
+	coinArr[0].setPosition(60.f, 50.f);
+	coinArr[0].setScale(2.21387f, 2.21387f);
 }
 
 void Endscreen::update() {
@@ -87,7 +96,8 @@ void Endscreen::render(sf::RenderWindow* target) {
 		else if (end_round_screen && endscreenTime.getElapsedTime().asSeconds() < wait + duration) {
 			target->draw(spCoin);
 		}
-
+		cout << spCoin.getScale().x << " " << spCoin.getScale().y << endl;
+	
 		// Wenn der Endscreen vorbei ist, schalte alles aus
 		if (endscreenTime.getElapsedTime().asSeconds() >= wait + duration) {
 			render_screen = false;
@@ -95,6 +105,13 @@ void Endscreen::render(sf::RenderWindow* target) {
 			end_round_screen = false;
 		}
 	}
+
+	if (coin1) target->draw(coinArr[0]);
+	if (coin2) target->draw(coinArr[1]);
+	if (coin3) target->draw(coinArr[2]);
+	if (coin4) target->draw(coinArr[3]);
+	if (coin5) target->draw(coinArr[4]);
+	if (coin6) target->draw(coinArr[5]);
 }
 
 void Endscreen::moveCoin(int coinIndex)
@@ -110,6 +127,7 @@ void Endscreen::moveCoin(int coinIndex)
 		moveX = -3.f;
 		moveY = -1.6f;
 		shrinkFactor = 0.988f;
+		//coin1 = true;
 		break;
 	case 1: //nicht fertig
 		targetPos = sf::Vector2f(120.f, 80.f);
@@ -140,6 +158,7 @@ void Endscreen::moveCoin(int coinIndex)
 			spCoin.setScale(scale.x * shrinkFactor, scale.y * shrinkFactor);
 		}
 	}
+	else coin1 = true;
 
 	arrayCoinPlayer_x[coinIndex] = spCoin.getPosition().x;
 	arrayCoinPlayer_y[coinIndex] = spCoin.getPosition().y;
