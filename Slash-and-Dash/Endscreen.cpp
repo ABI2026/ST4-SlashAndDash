@@ -32,6 +32,10 @@ Endscreen::Endscreen() {
 	coinArr[1].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
 	coinArr[1].setPosition(170.f, 50.f);
 	coinArr[1].setScale(2.21387f, 2.21387f);
+
+	coinArr[2].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
+	coinArr[2].setPosition(280.f, 50.f);
+	coinArr[2].setScale(2.21387f, 2.21387f);
 }
 
 void Endscreen::update(int countP1, int countP2) {
@@ -60,6 +64,7 @@ void Endscreen::update(int countP1, int countP2) {
 	if (end_round_screen && elapsed >= 1.4 && countP2 == 5) moveCoin(4, countP1, countP2);
 	if (end_round_screen && elapsed >= 1.4 && countP2 == 6) moveCoin(5, countP1, countP2);
 	
+	if (countP1 == 3) coin3 = true; //zum testen
 
 	if (is_finished()) { 
 		end_round_screen = false;
@@ -106,7 +111,7 @@ void Endscreen::render(sf::RenderWindow* target) {
 		else if (end_round_screen && endscreenTime.getElapsedTime().asSeconds() < wait + duration) {
 			target->draw(spCoin);
 		}
-		cout << spCoin.getScale().x << " " << spCoin.getScale().y << endl;
+		cout << "Moving Coin" << spCoin.getPosition().x << " " << spCoin.getPosition().y << endl;
 	
 		// Wenn der Endscreen vorbei ist, schalte alles aus
 		if (endscreenTime.getElapsedTime().asSeconds() >= wait + duration) {
@@ -116,12 +121,16 @@ void Endscreen::render(sf::RenderWindow* target) {
 		}
 	}
 
-	if (coin1 && !winning_screen) target->draw(coinArr[0]);
-	if (coin2 && !winning_screen) target->draw(coinArr[1]);
-	if (coin3) target->draw(coinArr[2]);
-	if (coin4) target->draw(coinArr[3]);
-	if (coin5) target->draw(coinArr[4]);
-	if (coin6) target->draw(coinArr[5]);
+	if (coin1 && (endscreenTime.getElapsedTime().asSeconds() <= 1.4 || !winning_screen)) target->draw(coinArr[0]);
+	if (coin2 && (endscreenTime.getElapsedTime().asSeconds() <= 1.4 || !winning_screen)) {
+		target->draw(coinArr[1]);
+		cout << "static coin: " << coinArr[1].getPosition().x << " " << coinArr[1].getPosition().y << endl;
+
+	}
+	if (coin3 && (endscreenTime.getElapsedTime().asSeconds() <= 1.4 || !winning_screen)) target->draw(coinArr[2]);
+	if (coin4 && (endscreenTime.getElapsedTime().asSeconds() <= 1.4 || !winning_screen)) target->draw(coinArr[3]);
+	if (coin5 && (endscreenTime.getElapsedTime().asSeconds() <= 1.4 || !winning_screen)) target->draw(coinArr[4]);
+	if (coin6 && (endscreenTime.getElapsedTime().asSeconds() <= 1.4 || !winning_screen)) target->draw(coinArr[5]);
 }
 
 void Endscreen::moveCoin(int coinIndex, int pointsP1, int pointsP2)
@@ -137,20 +146,18 @@ void Endscreen::moveCoin(int coinIndex, int pointsP1, int pointsP2)
 		moveX = -3.f;
 		moveY = -1.6f;
 		shrinkFactor = 0.988f;
-		//coin1 = true;
 		break;
 	case 1: //nicht fertig
 		targetPos = sf::Vector2f(170.f, 60.f);
-		moveX = -2.8f;
+		moveX = -2.77f;
 		moveY = -2.f;
-		shrinkFactor = 0.980f;
-		//coin2 = true;
+		shrinkFactor = 0.985f;
 		break;
 	case 2: // nicht fertig
-		targetPos = sf::Vector2f(180.f, 100.f);
-		moveX = -2.f;
-		moveY = -1.0f;
-		shrinkFactor = 0.985f;
+		targetPos = sf::Vector2f(280.f, 100.f);
+		moveX = -2.44f;
+		moveY = -2.4f;
+		shrinkFactor = 0.982f;
 		break;
 	default:
 		return; 
@@ -181,6 +188,7 @@ void Endscreen::moveCoin(int coinIndex, int pointsP1, int pointsP2)
 
 	arrayCoinPlayer_x[coinIndex] = spCoin.getPosition().x;
 	arrayCoinPlayer_y[coinIndex] = spCoin.getPosition().y;
+
 }
 
 bool Endscreen::is_finished()
