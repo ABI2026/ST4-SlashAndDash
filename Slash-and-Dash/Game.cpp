@@ -48,6 +48,13 @@ void Game::initVars() {
 	bool_start_winning_screen = false;
 	enable_debug_menu = true;
 
+	// Reset Controller Flags
+	player1AttackPressed = false;
+	player2AttackPressed = false;
+	menuConfirmPressed = false;
+	menuBackPressed = false;
+
+
 	mBg.openFromFile("assets/Music/Slash and Dash idea 1.wav");
 	mBg.setVolume(10);
 	mBg.play();
@@ -100,7 +107,7 @@ void Game::updatePlayer(sf::Time deltaTime) {
 	sf::Vector2f prevPos2 = player2->get_Position();
 	sf::Vector2f prevAveragePosition = (prevPos1 + prevPos2) * 0.5f;
 
-	player->update(deltaTime);
+	player->update(deltaTime); // Beinhaltet Player::handleInput fur Bewegung
 	player2->update(deltaTime);
 
 	sf::Vector2f currentPos1 = player->get_Position();
@@ -115,54 +122,75 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 	world->update(directionDot > 0 ? movement.x : 0);
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
+	// --- Angriff durch Spieler 1 (Controller oder Maus) ---
+	// ALT: if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && player->is_alive) {
+	if ((player1AttackPressed || sf::Mouse::isButtonPressed(sf::Mouse::Left)) && player->is_alive) {
+		player1AttackPressed = false; // Flag sofort zurucksetzen
 		player->attack();
-		if (player->get_attackBounds().intersects(player2->get_globalBounds())) {
+		if (player->get_attackBounds().intersects(player2->get_globalBounds()) && player->get_sword_position() != player2->get_sword_position()) {
 			player2->die();
 			die.play();
-			alive = false;
-			player1_won = true;
+			alive = false; // Spielzustand andern (wird im Haupt-Update gepruft)
+			player1_won = true; // Merken wer gewonnen hat
 			if (countPoints) {
-				points[0] += 1;
-				cout << "Player 0: " << points[0] << endl;
-				countPoints = false;
+				points[0]++;
+				std::cout << "Player 0: " << points[0] << std::endl;
+				countPoints = false; // Punkte nur einmal pro Runde zahlen
 			}
-			if(!bool_start_winning_screen) endscreen->endscreen_start(1.4, 4, 0);
+			// Endscreen startet nur, wenn nicht bereits ein Gewinn-Screen lauft
+			if (!bool_start_winning_screen) endscreen->endscreen_start(1.4, 4, 0);
 		}
 	}
 	else if (player2->is_dying_animation_finished() && endscreen->is_finished() && !bool_start_winning_screen) {
+		// Runde neu starten, wenn Spieler 2 gestorben ist und Endscreen fertig
 		start_Round();
-		countPoints = true;
+		countPoints = true; // Punkte zahlen wieder erlauben
 		player1_won = false;
+		alive = true; // Spielzustand wiederherstellen
 	}
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
+	// --- Angriff durch Spieler 2 (Controller oder Maus) ---
+	// ALT: if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && player2->is_alive) {
+	if ((player2AttackPressed || sf::Mouse::isButtonPressed(sf::Mouse::Right)) && player2->is_alive) {
+		player2AttackPressed = false; // Flag sofort zurucksetzen
 		player2->attack();
-		if (player2->get_attackBounds().intersects(player->get_globalBounds())) {
+		if (player2->get_attackBounds().intersects(player->get_globalBounds()) && player->get_sword_position() != player2->get_sword_position()) {
 			player->die();
 			die.play();
-			alive = false;
+			alive = false; // Spielzustand andern
+			player1_won = false; // Spieler 2 hat diese Runde gewonnen
 			if (countPoints) {
 				points[1]++;
-				cout << "Player 1:" << points[1] << endl;
-				countPoints = false;
+				std::cout << "Player 1: " << points[1] << std::endl;
+				countPoints = false; // Punkte nur einmal pro Runde zahlen
 			}
-			if(!bool_start_winning_screen)endscreen->endscreen_start(1.4, 4, 1);
+			// Endscreen startet nur, wenn nicht bereits ein Gewinn-Screen lauft
+			if (!bool_start_winning_screen) endscreen->endscreen_start(1.4, 4, 1);
 		}
 	}
 	else if (player->is_dying_animation_finished() && endscreen->is_finished() && !bool_start_winning_screen) {
+		// Runde neu starten, wenn Spieler 1 gestorben ist und Endscreen fertig
 		start_Round();
-		countPoints = true;
+		countPoints = true; // Punkte zahlen wieder erlauben
+		alive = true; // Spielzustand wiederherstellen
 	}
 }
 
 void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
-	if (state == State::inGameMenu || state == State::inMainMenu) updateMenu(); else updatePlayer(deltaTime);
-	if (!alive && !toMainMenu && player1_won) { 
-		endscreen->update(0); 
+
+	if (state == State::inGameMenu || state == State::inMainMenu) {
+		updateMenu();
 	}
-	else if (!alive && !toMainMenu && !player1_won) endscreen->update(1);
+	else if (state == State::Playing) {
+		updatePlayer(deltaTime);
+	}
+
+	if (!alive || bool_start_winning_screen) {
+		int winner = player1_won ? 0 : 1;
+		endscreen->update(winner);
+	}
+
 	end_game();
 }
 
@@ -284,6 +312,85 @@ void Game::end_game()
 			points[1] = 0;
 		}
 	}
+}
+
+void Game::handleMenuSelection() {
+	int selectedOption = menu->getSelectedOption();
+	sf::Vector2u windowSize = window->getSize();
+
+	switch (menu->getState()) {
+	case Menu::MainMenu:
+		if (selectedOption == 0) {
+			state = State::Playing;
+			// Eventuell hier das Menu ausblenden
+		}
+		else if (selectedOption == 1) {
+			menu->setState(Menu::SettingsMenu, windowSize);
+		}
+		else if (selectedOption == 2) {
+			window->close();
+		}
+		break;
+
+	case Menu::SettingsMenu:
+		if (selectedOption == 0) menu->setState(Menu::SoundMenu, windowSize);
+		else if (selectedOption == 1) menu->setState(Menu::DisplayMenu, windowSize);
+		else if (selectedOption == 2) menu->setState(Menu::MainMenu, windowSize);
+		break;
+
+	case Menu::SoundMenu:
+		if (selectedOption == 0) mBg.play();
+		if (selectedOption == 1) mBg.pause();
+		if (selectedOption == 2) menu->setState(Menu::SettingsMenu, windowSize);
+		break;
+
+	case Menu::DisplayMenu:
+		if (selectedOption == 0) {
+			fullscreen = !fullscreen;
+			window->create(sf::VideoMode(960, 540), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close | sf::Style::Titlebar);
+			updateView();
+			menu->setState(Menu::DisplayMenu, window->getSize());
+		}
+		else if (selectedOption == 1) {
+			menu->setState(Menu::ResolutionMenu, windowSize);
+		}
+		else if (selectedOption == 2) {
+			menu->setState(Menu::SettingsMenu, windowSize);
+		}
+		break;
+
+	case Menu::ResolutionMenu:
+	{
+		std::vector<int> res = menu->getSelectetResolution(selectedOption);
+		window->create(sf::VideoMode(res[0], res[1]), "Slash & Dash", fullscreen ? sf::Style::Fullscreen : sf::Style::Close | sf::Style::Titlebar);
+		updateView(); // Wichtig!
+		menu->setState(Menu::ResolutionMenu, window->getSize());
+	}
+	break;
+	}
+	// menu->resetCurrentIndex();
+}
+
+void Game::handleMenuBack() {
+	sf::Vector2u windowSize = window->getSize();
+	switch (menu->getState()) {
+		// Von Untermenus zuruck zum ubergeordneten Menu
+	case Menu::SettingsMenu:
+	case Menu::SoundMenu:
+	case Menu::DisplayMenu:
+	case Menu::ResolutionMenu:
+		menu->setState(Menu::SettingsMenu, windowSize);
+		break;
+
+	case Menu::MainMenu:
+		if (state == State::inGameMenu) {
+			state = State::Playing;
+		}
+		break;
+	default:
+		break;
+	}
+	// menu->resetCurrentIndex();
 }
 
 void Game::render() {

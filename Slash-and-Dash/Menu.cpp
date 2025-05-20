@@ -6,12 +6,12 @@ Menu::Menu(float width, float height) : currentIndex(0), currentState(MainMenu) 
     }
     bg.loadFromFile("Assets/Texture/menu/menu-background.png");
     bg_shape.setTexture(&bg);
-    bg_shape.setSize((sf::Vector2f)bg.getSize()*5.f);
+    bg_shape.setSize((sf::Vector2f)bg.getSize() * 5.f);
     mainMenuTextures[0].loadFromFile("assets/Texture/menu/menu-play-hover.png");
     mainMenuTextures[1].loadFromFile("assets/Texture/menu/menu-options-hover.png");
     mainMenuTextures[2].loadFromFile("assets/Texture/menu/menu-exit-hover.png");
     button_hover.setTexture(&mainMenuTextures[0]);
-    button_hover.setSize((sf::Vector2f)button_hover.getTexture()->getSize()*2.f);
+    button_hover.setSize((sf::Vector2f)button_hover.getTexture()->getSize() * 2.f);
     setState(MainMenu, { static_cast<unsigned int>(width), static_cast<unsigned int>(height) });
 
     button_hover.setOrigin(button_hover.getSize() / 2.f);
@@ -21,7 +21,8 @@ void Menu::moveUp() {
     if (currentState == MenuState::MainMenu) {
         currentIndex = (currentIndex - 1 + menuOptions.size()) % menuOptions.size();
         button_hover.setTexture(&mainMenuTextures[currentIndex]);
-    }else{
+    }
+    else {
         updateOptionColor(currentIndex, sf::Color::White);
         currentIndex = (currentIndex - 1 + menuOptions.size()) % menuOptions.size();
         updateOptionColor(currentIndex, sf::Color::Red);
@@ -59,7 +60,8 @@ void Menu::render(sf::RenderTarget* target) {
     target->draw(bg_shape);
     if (currentState == MenuState::MainMenu) {
         target->draw(button_hover);
-    }else{
+    }
+    else {
         for (const auto& option : menuOptions) {
             target->draw(option);
         }
@@ -158,6 +160,6 @@ void Menu::loadDisplayMenu(int cs, sf::Vector2u ws) {
 }
 
 void Menu::loadResolutionMenu(int cs, sf::Vector2u ws) {
-    std::vector<std::string> options = { "640 x 360", "854 x 480", "1280 x 720", "1920 x 1080", "2560 x 1440", "3840 x 2160"};
+    std::vector<std::string> options = { "640 x 360", "854 x 480", "1280 x 720", "1920 x 1080", "2560 x 1440", "3840 x 2160" };
     loadMenuOptions(options, cs, ws);
 }
