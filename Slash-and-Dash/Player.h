@@ -35,6 +35,7 @@ private:
     std::vector<sf::Texture*> dyingRefs;
 
     // Animation controllers
+    std::vector<Animation_Player*> walkingAnimations;
     Animation_Player* walkingAnimation;
     Animation_Player* swordPullingAnimation;
     Animation_Player* attackAnimation;

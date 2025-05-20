@@ -17,6 +17,8 @@ public:
         : sp(sp), animation_textures(tx), frame_duration(frame_duration), current_frame(0), is_playing(false), loop(false) {
     }
 
+    void setToFrame(int frameIndex);
+
     bool isFinished();
 
     void update();
