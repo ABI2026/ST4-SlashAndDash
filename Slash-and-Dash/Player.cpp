@@ -62,11 +62,8 @@ void Player::initializeColliders() {
 
 void Player::load_animations() {
     // Load textures for different animations
-    loadTextureSet(swordPullingTextures1, "assets/Texture/swordpulling/animation-sword-pulling", 1, 4, ".png");
-    loadTextureSet(swordPullingTextures2, "assets/Texture/swordpulling2/animation-sword-pulling", 1, 4, ".2.png");
-
-    loadTextureSet(walkingTextures1, "assets/Texture/walking1/animation-walking1.", 1, 21, ".png"); // 7 für oben, für unten und für oben 
-    loadTextureSet(walkingTextures2, "assets/Texture/walking2/animation-walking2.", 1, 21, ".png");// 7 für oben, für unten und für oben 
+    loadTextureSet(walkingTextures1, "assets/Texture/walking1/animation-walking1.", 1, 21, ".png"); // 7 fï¿½r oben, fï¿½r unten und fï¿½r oben 
+    loadTextureSet(walkingTextures2, "assets/Texture/walking2/animation-walking2.", 1, 21, ".png");// 7 fï¿½r oben, fï¿½r unten und fï¿½r oben 
 
     loadTextureSet(attackTextures1, "assets/Texture/sword-swing1/animation-sword-swing1.", 1, 9, ".png");
     loadTextureSet(attackTextures2, "assets/Texture/sword-swing2/animation-sword-swing1.", 1, 9, ".png");
@@ -93,7 +90,7 @@ void Player::setupAnimations() {
     setupAnimationRefs(swordRefs, joystickId == 0 ? swordPullingTextures2 : swordPullingTextures1);
     setupAnimationRefs(dyingRefs, joystickId == 0 ? dyingTextures2 : dyingTextures1);
 
-    // Initialisiere drei Animation Player für die verschiedenen Schwertpositionen
+    // Initialisiere drei Animation Player fï¿½r die verschiedenen Schwertpositionen
     walkingAnimations.resize(3);
     for (int pos = 0; pos < 3; pos++) {
         std::vector<sf::Texture*> posRefs;
@@ -157,7 +154,7 @@ void Player::updateAnimations() {
             }
         }
         else if (is_walking) {
-            // Stelle sicher, dass wir die richtige Animation für die aktuelle Schwertposition verwenden
+            // Stelle sicher, dass wir die richtige Animation fï¿½r die aktuelle Schwertposition verwenden
             walkingAnimation = walkingAnimations[sword_position];
 
             if (!walkingAnimation->isPlaying()) {
@@ -244,7 +241,7 @@ float Player::handleInput(float deltaTime) {
             setFacingDirection(false);
         }
 
-        // Controller-Steuerung für Schwertposition
+        // Controller-Steuerung fï¿½r Schwertposition
         float axisY = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Y);
         // Nach oben
         if (axisY < -20 && sword_position != 2 && !wPressed) {
