@@ -28,8 +28,8 @@ public:
 	//bool winning_screen_or_end_screen; // true = endscrren false = winningscreen
 	bool end_round_screen;
 	bool winning_screen;
-	float arrayCoinPlayer_x[3];
-	float arrayCoinPlayer_y[3];
+	float arrayCoinPlayer_x[6];
+	float arrayCoinPlayer_y[6];
 
 	bool coin1, coin2, coin3, coin4, coin5, coin6;
 	sf::Sprite coinArr[6];

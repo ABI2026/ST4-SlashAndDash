@@ -36,6 +36,18 @@ Endscreen::Endscreen() {
 	coinArr[2].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
 	coinArr[2].setPosition(280.f, 50.f);
 	coinArr[2].setScale(2.21387f, 2.21387f);
+
+	coinArr[3].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
+	coinArr[3].setPosition(900.f, 50.f);
+	coinArr[3].setScale(2.21387f, 2.21387f);
+
+	coinArr[4].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
+	coinArr[4].setPosition(790.f, 50.f);
+	coinArr[4].setScale(2.21387f, 2.21387f);
+
+	coinArr[5].setOrigin(coinArr[0].getLocalBounds().width / 2, coinArr[0].getLocalBounds().height / 2);
+	coinArr[5].setPosition(680.f, 50.f);
+	coinArr[5].setScale(2.21387f, 2.21387f);
 }
 
 void Endscreen::update(int countP1, int countP2) {
@@ -60,11 +72,12 @@ void Endscreen::update(int countP1, int countP2) {
 	if(end_round_screen && elapsed >= 1.4 && countP1 == 1) moveCoin(0, countP1, countP2);
 	if (end_round_screen && elapsed >= 1.4 && countP1 == 2) moveCoin(1, countP1, countP2);
 	if (end_round_screen && elapsed >= 1.4 && countP1 == 3) moveCoin(2, countP1, countP2);
-	if (end_round_screen && elapsed >= 1.4 && countP2 == 4) moveCoin(3, countP1, countP2);
-	if (end_round_screen && elapsed >= 1.4 && countP2 == 5) moveCoin(4, countP1, countP2);
-	if (end_round_screen && elapsed >= 1.4 && countP2 == 6) moveCoin(5, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 1) moveCoin(3, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 2) moveCoin(4, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 3) moveCoin(5, countP1, countP2);
 	
 	if (countP1 == 3) coin3 = true; //zum testen
+	if (countP2 == 3 && countP1 != 3) coin6 = true;
 
 	if (is_finished()) { 
 		end_round_screen = false;
@@ -94,7 +107,7 @@ void Endscreen::start_winning_screen(float wait, float duration, int num)
 	winning_screen = true;
 
 	num == 0 ? txPlayer.loadFromFile("Assets/Texture/win-screen-player1.png")
-		: txPlayer.loadFromFile("Assets/Texture/win-screen-player1.png");
+		: txPlayer.loadFromFile("Assets/Texture/win-screen-player2.png");
 	spPlayer.setTexture(txPlayer);
 	spPlayer.setOrigin(spPlayer.getLocalBounds().width / 2, spPlayer.getLocalBounds().height);
 	spPlayer.setScale(2.f, 2.f);
@@ -159,6 +172,28 @@ void Endscreen::moveCoin(int coinIndex, int pointsP1, int pointsP2)
 		moveY = -2.4f;
 		shrinkFactor = 0.982f;
 		break;
+
+	case 3:
+		targetPos = sf::Vector2f(900.f, 60.f);
+		moveX = 3.f;
+		moveY = -1.6f;
+		shrinkFactor = 0.988f;
+		break;
+
+	case 4:
+		targetPos = sf::Vector2f(790.f, 60.f);
+		moveX = 2.77f;
+		moveY = -2.f;
+		shrinkFactor = 0.985f;
+		break;
+
+	case 5:
+		targetPos = sf::Vector2f(680.f, 60.f);
+		moveX = 2.44f;
+		moveY = -2.4f;
+		shrinkFactor = 0.982f;
+		break;
+
 	default:
 		return; 
 	}
@@ -166,7 +201,7 @@ void Endscreen::moveCoin(int coinIndex, int pointsP1, int pointsP2)
 	// Aktuelle Position
 	sf::Vector2f pos = spCoin.getPosition();
 
-	if (pos.y > targetPos.y || pos.x > targetPos.x) {
+	if ((pos.y > targetPos.y || pos.x > targetPos.x) && coinIndex <= 2) {
 
 		spCoin.move(moveX, moveY);
 
@@ -176,19 +211,26 @@ void Endscreen::moveCoin(int coinIndex, int pointsP1, int pointsP2)
 			spCoin.setScale(scale.x * shrinkFactor, scale.y * shrinkFactor);
 		}
 	}
-	else { 
-		if(pointsP1 >= 1) coin1 = true;
+	else if ((pos.y > targetPos.y || pos.x < targetPos.x) && coinIndex > 2) {
+		spCoin.move(moveX, moveY);
+
+		sf::Vector2f scale = spCoin.getScale();
+
+		if (scale.x > 2.21387f && scale.y > 2.21387f) {
+			spCoin.setScale(scale.x * shrinkFactor, scale.y * shrinkFactor);
+		}
+	}
+	else {
+		if (pointsP1 >= 1) coin1 = true;
 		if (pointsP1 >= 2) coin2 = true;
 		if (pointsP1 >= 3) coin3 = true;
 		if (pointsP2 >= 1) coin4 = true;
 		if (pointsP2 >= 2) coin5 = true;
 		if (pointsP2 >= 3) coin6 = true;
-
 	}
 
 	arrayCoinPlayer_x[coinIndex] = spCoin.getPosition().x;
 	arrayCoinPlayer_y[coinIndex] = spCoin.getPosition().y;
-
 }
 
 bool Endscreen::is_finished()
