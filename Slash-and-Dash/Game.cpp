@@ -178,8 +178,6 @@ void Game::updatePlayer(sf::Time deltaTime) {
 
 void Game::update(sf::Time deltaTime) {
 	updatePollEvents();
-	
-	endscreen->update(points[0], points[1]);
 
 	if (state == State::inGameMenu || state == State::inMainMenu) {
 		updateMenu();
@@ -188,7 +186,10 @@ void Game::update(sf::Time deltaTime) {
 		updatePlayer(deltaTime);
 	}
 
+	endscreen->update(points[0], points[1], player1_won);
+
 	end_game();
+
 }
 
 void Game::updateMenu() {
@@ -402,9 +403,7 @@ void Game::render() {
 		menu->render(this->window);
 	}
 
-	if (!alive) {
-		endscreen->render(this->window);
-	}
+	endscreen->render(this->window);
 	if(enable_debug_menu)debug_menu->render(this->window);
 
 	window->display();

@@ -50,7 +50,7 @@ Endscreen::Endscreen() {
 	coinArr[5].setScale(2.21387f, 2.21387f);
 }
 
-void Endscreen::update(int countP1, int countP2) {
+void Endscreen::update(int countP1, int countP2, bool playerWon) {
 	/*if (endscreenTime.getElapsedTime().asSeconds() >= duration && endscreenTime.getElapsedTime().asSeconds() < duration + 1) {
 		render_screen = false;
 
@@ -69,17 +69,17 @@ void Endscreen::update(int countP1, int countP2) {
 		render_screen = false;
 	}
 
-	if(end_round_screen && elapsed >= 1.4 && countP1 == 1) moveCoin(0, countP1, countP2);
-	if (end_round_screen && elapsed >= 1.4 && countP1 == 2) moveCoin(1, countP1, countP2);
-	if (end_round_screen && elapsed >= 1.4 && countP1 == 3) moveCoin(2, countP1, countP2);
-	if (end_round_screen && elapsed >= 1.4 && countP2 == 1) moveCoin(3, countP1, countP2);
-	if (end_round_screen && elapsed >= 1.4 && countP2 == 2) moveCoin(4, countP1, countP2);
-	if (end_round_screen && elapsed >= 1.4 && countP2 == 3) moveCoin(5, countP1, countP2);
+	if(end_round_screen && elapsed >= 1.4 && countP1 == 1 && playerWon) moveCoin(0, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP1 == 2 && playerWon) moveCoin(1, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP1 == 3 && playerWon) moveCoin(2, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 1 && !playerWon) moveCoin(3, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 2 && !playerWon) moveCoin(4, countP1, countP2);
+	if (end_round_screen && elapsed >= 1.4 && countP2 == 3 && !playerWon) moveCoin(5, countP1, countP2);
 	
 	if (countP1 == 3) coin3 = true; //zum testen
 	if (countP2 == 3 && countP1 != 3) coin6 = true;
 
-	if (is_finished()) { 
+	if (is_finished()) {
 		end_round_screen = false;
 		reset_coin();
 	}
@@ -157,6 +157,7 @@ void Endscreen::moveCoin(int coinIndex, int pointsP1, int pointsP2)
 	case 0:
 		targetPos = sf::Vector2f(60.f, 60.f);
 		moveX = -3.f;
+		//moveX = -0.f;
 		moveY = -1.6f;
 		shrinkFactor = 0.988f;
 		break;

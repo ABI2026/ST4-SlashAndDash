@@ -35,7 +35,7 @@ public:
 	sf::Sprite coinArr[6];
 
 	Endscreen();
-	void update(int countP1, int countP2);
+	void update(int countP1, int countP2, bool playerWon);
 	void endscreen_start(float wait, float duration);
 	void start_winning_screen(float wait, float duration, int num);
 	~Endscreen() {};
