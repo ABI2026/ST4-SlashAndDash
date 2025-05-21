@@ -1,5 +1,7 @@
 #pragma once
 #include<vector>
+#include <cstdlib>
+#include <ctime>
 #include "Layer.h"
 #include"SFML/Graphics.hpp"
 
@@ -9,6 +11,7 @@ class World{
 	sf::Sprite sp;
 	sf::Texture tx;
 	void loadLvl();
+	void setRandomLevel();
 
 public:
 	World();
