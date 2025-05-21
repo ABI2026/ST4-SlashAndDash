@@ -11,7 +11,7 @@ private:
 
 public:
 	Debug_Menu();
-	void update(Player* p, Player* p2);
+	void update(Player* p, Player* p2, sf::RenderWindow* window);
 	void render(sf::RenderWindow* target);
 };
 
