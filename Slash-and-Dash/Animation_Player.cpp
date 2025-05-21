@@ -28,6 +28,17 @@ void Animation_Player::stop() {
     //current_frame = 0;
 }
 
+// Animation_Player.cpp
+void Animation_Player::setToFrame(int frameIndex) {
+    if (animation_textures.empty() || frameIndex < 0 || frameIndex >= animation_textures.size()) {
+        return;
+    }
+
+    current_frame = frameIndex;
+    sp->setTexture(*animation_textures[current_frame]);
+}
+
+
 void Animation_Player::pause() {
     is_playing = false;
 }

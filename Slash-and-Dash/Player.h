@@ -11,6 +11,10 @@ private:
     float speed;
     bool is_walking;
     bool facing_right;
+    bool sPressed;
+    bool wPressed;
+
+    int sword_position;
 
     // Rendering components
     sf::Sprite sp;
@@ -31,6 +35,7 @@ private:
     std::vector<sf::Texture*> dyingRefs;
 
     // Animation controllers
+    std::vector<Animation_Player*> walkingAnimations;
     Animation_Player* walkingAnimation;
     Animation_Player* swordPullingAnimation;
     Animation_Player* attackAnimation;
@@ -74,6 +79,7 @@ public:
     sf::Vector2f get_Position();
     float get_PositionX();
     float get_PositionY();
+    int get_sword_position() { return sword_position; };
     sf::FloatRect get_attackBounds() { return attack_range.getGlobalBounds(); }
     sf::FloatRect get_globalBounds() { return hitbox.getGlobalBounds(); }
     int getJoystickID();
